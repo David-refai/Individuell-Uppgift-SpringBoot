@@ -45,7 +45,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             System.out.println("token: " + token);
             System.out.println("authorizationHeader: " + authorizationHeader);
 
-//            TODO: Check if the user is already authenticated
+//       if the user is already authenticated, we can skip the authentication process
 //            this is to avoid re-authentication on every request to our API
 //            so that we can use the @PreAuthorize annotation on our endpoints to check for roles and authorities of the user making the request to our API
 //            if the user is already authenticated, we can skip the authentication process
