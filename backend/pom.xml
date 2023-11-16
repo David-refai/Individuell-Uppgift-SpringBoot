@@ -15,6 +15,10 @@
     <description>Individuell-Uppgift-SpringBoot</description>
     <properties>
         <java.version>17</java.version>
+<<<<<<< HEAD
+=======
+        <jsonwebtoken.version>0.11.5</jsonwebtoken.version>
+>>>>>>> dev
     </properties>
     <dependencies>
         <dependency>
@@ -46,7 +50,29 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+<<<<<<< HEAD
 
+=======
+        <!--        jwt token-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+>>>>>>> dev
 <!--        lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
