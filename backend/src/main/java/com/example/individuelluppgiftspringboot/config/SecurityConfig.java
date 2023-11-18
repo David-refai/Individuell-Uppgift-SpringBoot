@@ -2,8 +2,6 @@ package com.example.individuelluppgiftspringboot.config;
 
 
 import com.example.individuelluppgiftspringboot.exception.DelegatingAuthenticationEntryPoint;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -75,8 +73,8 @@ public class SecurityConfig {
                 .cors(withDefaults())
 
                 .authorizeHttpRequests(configure -> configure
-                        .requestMatchers(HttpMethod.POST, "/api/v1/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register",
+                                "/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
@@ -85,11 +83,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint())
                 )
-//                .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults());
-
-
-
 
 
         return http.build();

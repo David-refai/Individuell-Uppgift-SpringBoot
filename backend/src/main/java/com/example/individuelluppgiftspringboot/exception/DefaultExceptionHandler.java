@@ -85,5 +85,16 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
+    @ExceptionHandler(HandleMethodArgumentNotValid.class)
+    public ResponseEntity<ApiError> handleException(HandleMethodArgumentNotValid e, HttpServletRequest request, HttpServletResponse response) {
+
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
+    }
+
     }
 

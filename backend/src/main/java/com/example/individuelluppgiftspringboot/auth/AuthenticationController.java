@@ -2,12 +2,10 @@ package com.example.individuelluppgiftspringboot.auth;
 
 import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.User;
-import com.example.individuelluppgiftspringboot.exception.ExistsEmailException;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import com.example.individuelluppgiftspringboot.utility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth") // http://localhost:8080/api/v1/auth
+@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
     private final UserService userService;
     private final JwtUtil jwtTokenService;
@@ -31,9 +29,6 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<User> createUserWithRole(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-            userService.existsByEmail(userRegistrationDTO.getEmail());
-            // Validate the UserDto (e.g., check for required fields)
-           userService.validateUserDto(userRegistrationDTO);
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
             // Issue a JWT token and include it in the response headers
             var token = jwtTokenService.issueToken(userRegistrationDTO.getEmail(), userRegistrationDTO.getRoles().toString());
@@ -56,10 +51,14 @@ public class AuthenticationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         // Invalidating the current session will effectively log the user out
+        var session = request.getSession(false); // false == don't create if it doesn't exist
+        if (session != null) {
+            session.invalidate(); // this will clear the session for the user
+        }
         SecurityContextHolder.clearContext();
 
         // Additionally, you may want to invalidate the token on the client side
-        return ResponseEntity.ok().body("Logout successful");
+        return ResponseEntity.ok().body("Logged out successfully");
     }
 
 }

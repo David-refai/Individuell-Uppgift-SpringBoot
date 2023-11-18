@@ -7,8 +7,10 @@ import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.Role;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.exception.ExistsEmailException;
+import com.example.individuelluppgiftspringboot.exception.HandleMethodArgumentNotValid;
 import com.example.individuelluppgiftspringboot.exception.ResourceNotFoundException;
 import com.example.individuelluppgiftspringboot.mapper.UserDTOMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,28 +44,31 @@ public class UserService {
                 });
     }
 
-    public User saveUserWithRoles(UserRegistrationDTO userRegistrationDTO) {
-        try {
-            validateUserDto(userRegistrationDTO);
-            existsByEmail(userRegistrationDTO.getEmail());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
 
-            User user = new User();
-            var roles = userRegistrationDTO.getRoles();
-            roles.forEach(role1 -> {
-                var role = new Role(role1);
-                user.addRole(role);
-            });
-            user.setName(userRegistrationDTO.getName());
-            user.setEmail(userRegistrationDTO.getEmail());
-            user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
-            return userRepository.save(user);
+//    save user with roles
+    public User saveUserWithRoles(UserRegistrationDTO userRegistrationDTO) {
+// Validate the UserDto (e.g., check for required fields)
+        validateUserDto(userRegistrationDTO);
+
+//        check if email already exists
+        existsByEmail(userRegistrationDTO.getEmail());
+
+
+        User user = new User();
+        var roles = userRegistrationDTO.getRoles();
+        roles.forEach(role1 -> {
+            var role = new Role(role1);
+            user.addRole(role);
+        });
+        user.setName(userRegistrationDTO.getName());
+        user.setEmail(userRegistrationDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        return userRepository.save(user);
 
     }
 
 
+//    get all users
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -75,19 +80,19 @@ public class UserService {
     public UserDto getUserById(Long id) {
         return userRepository.findById(Math.toIntExact(id))
                 .map(userDTOMapper)
-                   .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
 
 
-    public void validateUserDto(UserRegistrationDTO user) {
+    private void validateUserDto(@Valid UserRegistrationDTO user) {
         if (user.getName() == null || user.getName().isEmpty()) {
-            throw new IllegalArgumentException("Name is required");
+            throw new HandleMethodArgumentNotValid("Name is required");
         }
         if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("Email is required");
+            throw new HandleMethodArgumentNotValid("Email is required");
         }
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password is required");
+            throw new HandleMethodArgumentNotValid("Password is required");
         }
 
     }
