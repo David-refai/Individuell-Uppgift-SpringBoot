@@ -2,6 +2,7 @@ package com.example.individuelluppgiftspringboot.auth;
 
 import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.User;
+import com.example.individuelluppgiftspringboot.exception.ExistsEmailException;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import com.example.individuelluppgiftspringboot.utility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth") // http://localhost:8080/api/v1/auth
 public class AuthenticationController {
     private final UserService userService;
     private final JwtUtil jwtTokenService;
@@ -30,7 +31,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<User> createUserWithRole(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-        try {
+            userService.existsByEmail(userRegistrationDTO.getEmail());
             // Validate the UserDto (e.g., check for required fields)
            userService.validateUserDto(userRegistrationDTO);
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
@@ -40,9 +41,7 @@ public class AuthenticationController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, token)
                     .body(savedUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+
     }
 
     @PostMapping("/login")

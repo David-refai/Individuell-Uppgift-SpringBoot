@@ -4,6 +4,7 @@ package com.example.individuelluppgiftspringboot.controller;
 import com.example.individuelluppgiftspringboot.dto.UserDto;
 import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.User;
+import com.example.individuelluppgiftspringboot.exception.ResourceNotFoundException;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import com.example.individuelluppgiftspringboot.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,21 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
-    private final JwtUtil jwtTokenService;
+
 
     @Autowired
-    public UserController(UserService userService, JwtUtil jwtTokenService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.jwtTokenService = jwtTokenService;
+
 
     }
-
-
-
-
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -39,7 +36,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        var user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+            var userById = userService.getUserById(id);
+            return ResponseEntity.ok(userById);
     }
 }

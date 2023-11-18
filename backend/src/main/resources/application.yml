@@ -1,17 +1,16 @@
-<<<<<<< HEAD
-=======
 
-
->>>>>>> dev
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/applicationdb
     username: david
     password: password
+
+  main:
+    banner-mode: "off"
+    web-application-type: servlet
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-<<<<<<< HEAD
     hibernate:
         ddl-auto: validate #create-drop #update #validate #none
     properties:
@@ -34,39 +33,11 @@ spring:
       locations: classpath:db/migration
       schemas: applicationdb
 server:
-    port: 8080
-    error:
-        include_message: always
-
-=======
-    database: postgresql
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        jdbc:
-          lob:
-            non_contextual_creation: true
-
-
-
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-  application:
-    name: springboot-postgres
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
-    schemas: applicationdb
-
-server:
   port: 8080
   error:
-    include_message: always
-  address:
->>>>>>> dev
+    include-binding-errors: always
+    include-message: always
+
+
+
+

@@ -1,32 +1,42 @@
 package com.example.individuelluppgiftspringboot.exception;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.LocalDateTime;
+
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.io.IOException;
-
-
 @Component
-public class DelegatAuthPoint implements AuthenticationEntryPoint {
-        private final HandlerExceptionResolver handlerExceptionResolver;
+public class DelegatingAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-        public DelegatAuthPoint(
-               @Qualifier("handlerExceptionResolver")HandlerExceptionResolver handlerExceptionResolver) {
-            this.handlerExceptionResolver = handlerExceptionResolver;
-        }
+    private final HandlerExceptionResolver handlerExceptionResolver;
+
+    public DelegatingAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+        this.handlerExceptionResolver = handlerExceptionResolver;
+    }
 
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException authException
-    ) throws IOException, ServletException{
+                         AuthenticationException authException) throws IOException, ServletException {
+
         handlerExceptionResolver.resolveException(request, response, null, authException);
     }
 }
+
+
+
+
+
+
