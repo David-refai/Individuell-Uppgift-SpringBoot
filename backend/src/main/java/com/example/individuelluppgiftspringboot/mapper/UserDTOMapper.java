@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class UserDTOMapper implements Function<User, UserDto> {
     @Override
     public UserDto apply(User user) {
-       var u = new UserDto(
+        return new UserDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
@@ -23,7 +23,5 @@ public class UserDTOMapper implements Function<User, UserDto> {
 
                 user.getUsername()
         );
-        System.out.println("u: ❌" + u);
-        return u;
     }
 }

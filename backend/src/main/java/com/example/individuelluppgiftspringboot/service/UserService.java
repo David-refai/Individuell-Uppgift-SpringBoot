@@ -1,6 +1,7 @@
 package com.example.individuelluppgiftspringboot.service;
 
 
+import com.example.individuelluppgiftspringboot.dao.RoleRepository;
 import com.example.individuelluppgiftspringboot.dao.UserRepository;
 import com.example.individuelluppgiftspringboot.dto.UserDto;
 import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -24,16 +26,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final RoleRepository roleRepository;
 
     private final UserDTOMapper userDTOMapper;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       UserDTOMapper userDTOMapper) {
+                       RoleRepository roleRepository, UserDTOMapper userDTOMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
         this.userDTOMapper = userDTOMapper;
     }
 
@@ -45,7 +48,7 @@ public class UserService {
     }
 
 
-//    save user with roles
+    //    save user with roles
     public User saveUserWithRoles(UserRegistrationDTO userRegistrationDTO) {
 // Validate the UserDto (e.g., check for required fields)
         validateUserDto(userRegistrationDTO);
@@ -68,7 +71,7 @@ public class UserService {
     }
 
 
-//    get all users
+    //    get all users
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -96,4 +99,45 @@ public class UserService {
         }
 
     }
+
+    public UserDto updateUser(Long id, UserRegistrationDTO userDto) {
+        if (userDto.getName() == null || userDto.getName().isEmpty()) {
+            throw new HandleMethodArgumentNotValid("Name is required");
+        }
+        if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
+            throw new HandleMethodArgumentNotValid("Email is required");
+        }
+
+        Optional<User> optionalUser = userRepository.findById(Math.toIntExact(id));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            user.setName(userDto.getName());
+            user.setEmail(userDto.getEmail());
+
+            // Check if a new password is provided
+            if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+
+            user.setRoles(userDto.getRoles().stream().map(Role::new).collect(Collectors.toList()));
+            userRepository.save(user);
+            return userRepository.findById(Math.toIntExact(id))
+                    .map(userDTOMapper)
+                    .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        } else {
+            // Handle the case where the user with the specified ID is not found
+            throw new HandleMethodArgumentNotValid("User not found with ID: " + id);
+        }
+    }
+
+    public void deleteUser(Long id) {
+        var user = userRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        var roles = user.getRoles();
+        roleRepository.deleteAll(roles);
+        userRepository.delete(user);
+    }
+
+
 }

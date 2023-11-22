@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.example.individuelluppgiftspringboot.service.CustomUserDetailsService;
-import com.example.individuelluppgiftspringboot.utility.JWTAuthFilter;
+import com.example.individuelluppgiftspringboot.jwtUtility.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,15 +33,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
-    private final JWTAuthFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
 
     @Autowired
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JWTAuthFilter jwtAuthFilter, HandlerExceptionResolver handlerExceptionResolver) {
+                          JwtAuthenticationFilter jwtAuthenticationFilter, HandlerExceptionResolver handlerExceptionResolver) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(customUserDetailsService, passwordEncoder()))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint())
                 )
                 .httpBasic(Customizer.withDefaults());

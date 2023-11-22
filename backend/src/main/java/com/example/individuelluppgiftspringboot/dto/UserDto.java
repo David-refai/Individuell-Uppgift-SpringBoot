@@ -15,11 +15,11 @@ import java.util.Set;
 @Setter
 
     public class UserDto {
-    private final int id;
-    private final String name;
-    private final String email;
+    private  int id;
+    private  String name;
+    private  String email;
     private List<String> roles;
-    private final String username;
+    private  String username;
 
     public UserDto(int id, String name, String email, List<String> roles, String username) {
         this.id = id;

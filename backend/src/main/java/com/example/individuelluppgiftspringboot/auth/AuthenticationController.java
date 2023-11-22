@@ -3,18 +3,16 @@ package com.example.individuelluppgiftspringboot.auth;
 import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.service.UserService;
-import com.example.individuelluppgiftspringboot.utility.JwtUtil;
+import com.example.individuelluppgiftspringboot.jwtUtility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "http://localhost:5173") // react app
 public class AuthenticationController {
     private final UserService userService;
     private final JwtUtil jwtTokenService;
@@ -44,7 +42,7 @@ public class AuthenticationController {
       AuthenticationResponse response = authenticationService.login(authenticationRequest);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, response.jwt())
-                .body(response.user());
+                .body(response);
     }
 
 //    log out

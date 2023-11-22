@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String password;
 
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Role> roles;
 

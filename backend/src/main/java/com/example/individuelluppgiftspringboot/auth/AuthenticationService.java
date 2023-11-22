@@ -3,7 +3,7 @@ package com.example.individuelluppgiftspringboot.auth;
 import com.example.individuelluppgiftspringboot.dto.UserDto;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.mapper.UserDTOMapper;
-import com.example.individuelluppgiftspringboot.utility.JwtUtil;
+import com.example.individuelluppgiftspringboot.jwtUtility.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

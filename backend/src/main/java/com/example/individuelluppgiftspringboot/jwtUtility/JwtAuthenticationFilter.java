@@ -1,4 +1,4 @@
-package com.example.individuelluppgiftspringboot.utility;
+package com.example.individuelluppgiftspringboot.jwtUtility;
 
 import com.example.individuelluppgiftspringboot.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -16,12 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JWTAuthFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userService;
 
-    public JWTAuthFilter(JwtUtil jwtUtil, CustomUserDetailsService userService) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService userService) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
