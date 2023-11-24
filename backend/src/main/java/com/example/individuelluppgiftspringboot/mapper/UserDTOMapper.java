@@ -1,6 +1,6 @@
 package com.example.individuelluppgiftspringboot.mapper;
 
-import com.example.individuelluppgiftspringboot.dto.UserDto;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
 import com.example.individuelluppgiftspringboot.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;

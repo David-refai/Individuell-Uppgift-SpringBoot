@@ -17,9 +17,9 @@ import UploadForm from './view/UploadForm';
 import Users from './view/Users';
 
 function App() {
-  const { currentUser, authenticated } = useContext(AuthContext);
-  console.log(currentUser);
-  console.log(authenticated);
+  const { currentUser } = useContext(AuthContext);
+  // console.log(currentUser);
+  // console.log(authenticated);
 
 
 

@@ -12,7 +12,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-        ddl-auto: validate #create-drop #update #validate #none
+        ddl-auto: update #create-drop #update #validate #none
     properties:
         hibernate:
         show_sql: true

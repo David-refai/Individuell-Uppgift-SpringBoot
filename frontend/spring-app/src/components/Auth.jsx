@@ -9,6 +9,22 @@ export const AuthProvider = ({ children }) => {
   const API_URL = 'api/v1/auth/';
 
   const [authenticated, setAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
+
+
+  const isAuthenticated = () => {
+    const token = getAuthToken();
+    console.log('token' + token);
+    if (!token) {
+      return false;
+    }
+    const { exp } = JSON.parse(atob(token.split('.')[1]));
+    if (exp < new Date().getTime() / 1000) {
+      logoutUser();
+      return false;
+    }
+    return true;
+  };
 
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem('user')) || null
@@ -159,8 +175,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
-
   const getUserById = async (id) => {
     try {
       const token = getAuthToken();
@@ -176,7 +190,7 @@ export const AuthProvider = ({ children }) => {
         );
         return response.data;
       }
-      return null; 
+      return null;
     } catch (error) {
       console.error('Error during user update:', error);
       throw error;
@@ -187,6 +201,9 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     setIsLoading(false);
+      if (authenticated) {
+        setToken(getAuthToken());
+      }
   }, [currentUser, authenticated]);
 
   return (
@@ -202,6 +219,9 @@ export const AuthProvider = ({ children }) => {
         getAllUsers,
         deleteUser,
         getUserById,
+        isAuthenticated,
+        getAuthToken,
+        token,
       }}
     >
       {children}

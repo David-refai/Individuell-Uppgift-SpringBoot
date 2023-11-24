@@ -2,12 +2,10 @@
 
 import {
   Box,
-  FormControl,
   FormLabel,
   Input,
   Stack,
   Button,
-  Select,
   Drawer,
   DrawerOverlay,
   DrawerContent,
@@ -20,6 +18,7 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import UploadFile from '../components/UploadFile';
+import FilesTable from './FilesTable';
 
 export default function UploadForm() {
     const { isOpen, onClose, onOpen} = useDisclosure();
@@ -40,10 +39,17 @@ export default function UploadForm() {
   }, [error]);
 
   return (
-    <form>
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={24} px={6}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onOpen();
+      }}
+>
+      <Stack spacing={8} mx={'auto'} py={24} px={6} w="100%">
         <Button
           display={{ base: 'none', md: 'inline-flex' }}
+          
+          maxW={'sm'}
           fontSize={'sm'}
           fontWeight={600}
           color={'white'}
@@ -51,9 +57,13 @@ export default function UploadForm() {
           bg={'pink.400'}
           colorScheme="teal"
           onClick={onOpen}
+       
         >
           Upload file
         </Button>
+
+        <FilesTable />
+
         <Drawer
           isOpen={isOpen}
           placement="right"
@@ -80,19 +90,12 @@ export default function UploadForm() {
                 </Box>
 
                 <Box>
-                  <UploadFile />
+                  <UploadFile onclose={onClose} />
                 </Box>
               </Stack>
             </DrawerBody>
 
-            <DrawerFooter borderTopWidth="1px">
-              <Button variant="outline" mr={3} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="blue" type="submit">
-                Upload
-              </Button>
-            </DrawerFooter>
+            <DrawerFooter borderTopWidth="1px"></DrawerFooter>
           </DrawerContent>
         </Drawer>
       </Stack>

@@ -1,4 +1,4 @@
-package com.example.individuelluppgiftspringboot.dto;
+package com.example.individuelluppgiftspringboot.dto.userdto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

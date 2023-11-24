@@ -1,4 +1,4 @@
-package com.example.individuelluppgiftspringboot.dto;
+package com.example.individuelluppgiftspringboot.dto.userdto;
 
 import com.example.individuelluppgiftspringboot.entities.Role;
 import lombok.AllArgsConstructor;

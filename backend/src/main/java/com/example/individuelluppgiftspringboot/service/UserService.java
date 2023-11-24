@@ -3,8 +3,8 @@ package com.example.individuelluppgiftspringboot.service;
 
 import com.example.individuelluppgiftspringboot.dao.RoleRepository;
 import com.example.individuelluppgiftspringboot.dao.UserRepository;
-import com.example.individuelluppgiftspringboot.dto.UserDto;
-import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.Role;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.exception.ExistsEmailException;

@@ -1,8 +1,8 @@
 package com.example.individuelluppgiftspringboot.controller;
 
 
-import com.example.individuelluppgiftspringboot.dto.UserDto;
-import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

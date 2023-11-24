@@ -1,6 +1,6 @@
 package com.example.individuelluppgiftspringboot.auth;
 
-import com.example.individuelluppgiftspringboot.dto.UserDto;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.mapper.UserDTOMapper;
 import com.example.individuelluppgiftspringboot.jwtUtility.JwtUtil;

@@ -1,6 +1,6 @@
 package com.example.individuelluppgiftspringboot.jwtUtility;
 
-import com.example.individuelluppgiftspringboot.dto.UserDto;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

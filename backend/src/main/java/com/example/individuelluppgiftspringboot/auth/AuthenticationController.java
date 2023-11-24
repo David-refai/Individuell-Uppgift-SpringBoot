@@ -1,6 +1,6 @@
 package com.example.individuelluppgiftspringboot.auth;
 
-import com.example.individuelluppgiftspringboot.dto.UserRegistrationDTO;
+import com.example.individuelluppgiftspringboot.dto.userdto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import com.example.individuelluppgiftspringboot.jwtUtility.JwtUtil;

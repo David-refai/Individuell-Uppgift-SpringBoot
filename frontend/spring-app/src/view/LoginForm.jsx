@@ -13,7 +13,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../components/Auth';
 import { useNavigate } from 'react-router-dom';
 import SpinnerShow from '../components/SpinnerShow';

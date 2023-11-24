@@ -30,6 +30,7 @@ public class Role implements GrantedAuthority {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
+    @ToString.Exclude
     private User user;
 
 

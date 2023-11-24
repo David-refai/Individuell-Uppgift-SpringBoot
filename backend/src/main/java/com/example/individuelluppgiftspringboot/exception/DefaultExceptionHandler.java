@@ -24,38 +24,39 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    this is an exception handler for resource not found
+    //    this is an exception handler for resource not found
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiError> handleException(EntityNotFoundException e, HttpServletRequest request) {
 
         ApiError apiError = new ApiError(
                 request.getRequestURI(),
-                 e.getMessage(),
+                e.getMessage(),
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now());
 
         System.out.println("EntityNotFoundException: ❌ " + apiError);
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
-//    this is an exception handler for insufficient authentication
+
+    //    this is an exception handler for insufficient authentication
     @ExceptionHandler(InsufficientAuthenticationException.class)
     public ResponseEntity<ApiError> handleException(InsufficientAuthenticationException e, HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 request.getRequestURI(),
-                 e.getMessage(),
+                e.getMessage(),
                 HttpStatus.FORBIDDEN.value(),
                 LocalDateTime.now());
 //        System.out.println("InsufficientAuthenticationException: ❌ " + apiError);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiError);
     }
 
-//   this is a generic exception handler
+    //   this is a generic exception handler
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e, HttpServletRequest request) {
 
         ApiError apiError = new ApiError(
                 request.getRequestURI(),
-                 e.getMessage(),
+                e.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now());
         System.out.println("Exception: ❌ " + apiError);
@@ -85,6 +86,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
     }
+
     @ExceptionHandler(HandleMethodArgumentNotValid.class)
     public ResponseEntity<ApiError> handleException(HandleMethodArgumentNotValid e, HttpServletRequest request, HttpServletResponse response) {
 
@@ -96,5 +98,16 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
+    @ExceptionHandler(NotFoundFileException.class)
+    public ResponseEntity<ApiError> handleException(NotFoundFileException e, HttpServletRequest request, HttpServletResponse response) {
+
+        ApiError apiError = new ApiError(
+                request.getRequestURI(),
+                e.getMessage(),
+                HttpStatus.NOT_FOUND.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+
     }
+}
 
