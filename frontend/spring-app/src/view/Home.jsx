@@ -9,6 +9,7 @@ export default function Home() {
       minH={'100vh'}
       direction={'column'}
       align={'center'}
+      w={'full'}
       // justify={'center'}
     >
       <VStack spacing={8} w={'full'} mt={10}></VStack>
