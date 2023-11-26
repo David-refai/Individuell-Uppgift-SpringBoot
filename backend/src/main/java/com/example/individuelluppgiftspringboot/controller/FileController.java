@@ -34,6 +34,7 @@ public class FileController {
     {
         try {
             String fileName = file.getOriginalFilename();
+            fileName = fileName.replaceAll("\\s+", "_");
             String contentType = file.getContentType();
             byte[] data = file.getBytes();
 
@@ -58,15 +59,8 @@ public class FileController {
             filesUploadedEntity.setPath(f);
             filesUploadedEntity.setData(data);
             filesUploadedEntity.setFileDownloadUri("/api/v1/file/download/" + filesUploadedEntity.getFileName());
-//             sent size to database after convert to mb
-            double fileSizeInMB = file.getSize() / 1048576.0;
-            if (file.getSize() > 1000000) {
-        // Convert bytes to megabytes with double precision
-                filesUploadedEntity.setSize(Math.round(fileSizeInMB * 100.0) / 100.0);
-            } else {
                 filesUploadedEntity.setSize(file.getSize());
-            }
-//            filesUploadedEntity.setSize(file.getSize());
+
             fileRepository.save(filesUploadedEntity);
 
             FileUploadResponse response = new FileUploadResponse();
@@ -108,6 +102,41 @@ public class FileController {
         } catch (NotFoundFileException | IOException notFoundFileException) {
             throw new NotFoundFileException("File not found with id " + fileId);
       }
+    }
+
+    @DeleteMapping("/delete/{fileId}")
+    public ResponseEntity<?> deleteFile(@PathVariable Long fileId) {
+        Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);
+        if (fileOptional.isEmpty() || fileOptional.get().getPath() == null) {
+            fileRepository.deleteById(fileId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        FilesUploaded file = fileOptional.get();
+        String filePath = file.getPath(); // Retrieve the file path from the database
+
+        // Read file content from the src directory
+        File uploadedFile = new File(filePath);
+
+        try {
+            uploadedFile.delete();
+            fileRepository.deleteById(fileId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotFoundFileException notFoundFileException) {
+            throw new NotFoundFileException("File not found with id " + fileId);
+        }
+    }
+
+    @GetMapping("/file/{fileId}")
+    public ResponseEntity<FilesUploaded> getFileById(@PathVariable Long fileId) {
+        Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);
+        if (fileOptional.isEmpty() || fileOptional.get().getPath() == null) {
+            fileRepository.deleteById(fileId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        FilesUploaded file = fileOptional.get();
+        return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
     @GetMapping("/all")

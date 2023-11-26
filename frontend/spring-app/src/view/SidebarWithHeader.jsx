@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-'use client'
+'use client';
 
 import {
   IconButton,
@@ -15,13 +15,13 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
-
   Menu,
   MenuButton,
   MenuDivider,
   MenuItem,
   MenuList,
-} from '@chakra-ui/react'
+  Modal,
+} from '@chakra-ui/react';
 import {
   FiHome,
   FiMenu,
@@ -30,14 +30,11 @@ import {
   FiUser,
   FiUserPlus,
   FiFilePlus,
-} from 'react-icons/fi'
-import { Link, Outlet } from 'react-router-dom'
-import { AuthContext } from '../components/Auth'
-import { useContext } from 'react'
-
-
-
-
+} from 'react-icons/fi';
+import { Link, Outlet } from 'react-router-dom';
+import { AuthContext } from '../components/Auth';
+import { useContext } from 'react';
+import { ModalLoginForm } from './ModalLoginForm';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, link: '/' },
@@ -60,7 +57,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
       pos="fixed"
       zIndex={21}
       h="full"
-      {...rest}>
+      {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Logo
@@ -73,15 +71,16 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </NavItem>
       ))}
     </Box>
-  )
-}
+  );
+};
 
 const NavItem = ({ icon, children, ...rest }) => {
   return (
     <Box
       transition="3s ease"
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -93,7 +92,8 @@ const NavItem = ({ icon, children, ...rest }) => {
           bg: 'cyan.400',
           color: 'white',
         }}
-        {...rest}>
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
@@ -107,11 +107,11 @@ const NavItem = ({ icon, children, ...rest }) => {
         {children}
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const MobileNav = ({ onOpen, currentUser, ...rest }) => {
-  // const { isOpen: isP, onClose: oc, onOpen: op } = useDisclosure();
+  // const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { logoutUser } = useContext(AuthContext);
   const handleLogout = async () => {
@@ -210,7 +210,6 @@ const MobileNav = ({ onOpen, currentUser, ...rest }) => {
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
-              <MenuDivider />
               {currentUser ? (
                 <MenuItem
                   onClick={handleLogout}
@@ -221,13 +220,10 @@ const MobileNav = ({ onOpen, currentUser, ...rest }) => {
                   Sign out
                 </MenuItem>
               ) : (
-                <MenuItem
-                  onClick={onOpen}
-                  m={'0'}
-                  p={'0 10'}
-                  fontWeight={'bold'}
-                >
-                  <Link to="/login"> Sign in</Link>
+                <MenuItem m={'0'} p={'0 10'} fontWeight={'bold'}>
+                  <Link to="/login" onClick={onOpen}>
+                    Login
+                  </Link>
                 </MenuItem>
               )}
             </MenuList>
@@ -238,12 +234,11 @@ const MobileNav = ({ onOpen, currentUser, ...rest }) => {
   );
 };
 
-const SidebarWithHeader = ({ currentUser}) => {
+const SidebarWithHeader = ({ currentUser }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box h={'100vh'} w={'full'} >
-      // bg={useColorModeValue('gray.100', 'gray.900')}>
+    <Box h={'100vh'} w={'full'}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
@@ -260,7 +255,7 @@ const SidebarWithHeader = ({ currentUser}) => {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      <MobileNav onOpen={onOpen} currentUser={currentUser} />
+      <MobileNav currentUser={currentUser} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         <Outlet />
         {/* {children} */}
@@ -269,4 +264,4 @@ const SidebarWithHeader = ({ currentUser}) => {
   );
 };
 
-export default SidebarWithHeader
+export default SidebarWithHeader;

@@ -2,8 +2,6 @@
 
 import {
   Box,
-  FormLabel,
-  Input,
   Stack,
   Button,
   Drawer,
@@ -21,7 +19,7 @@ import UploadFile from '../components/UploadFile';
 import FilesTable from './FilesTable';
 
 export default function UploadForm() {
-    const { isOpen, onClose, onOpen} = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const firstField = React.useRef();
   const [error, setError] = useState('');
 
@@ -44,11 +42,12 @@ export default function UploadForm() {
         e.preventDefault();
         onOpen();
       }}
->
+    >
       <Stack spacing={8} mx={'auto'} py={24} px={6} w="100%">
+
+        
         <Button
           display={{ base: 'none', md: 'inline-flex' }}
-          
           maxW={'sm'}
           fontSize={'sm'}
           fontWeight={600}
@@ -57,7 +56,6 @@ export default function UploadForm() {
           bg={'pink.400'}
           colorScheme="teal"
           onClick={onOpen}
-       
         >
           Upload file
         </Button>
@@ -78,17 +76,6 @@ export default function UploadForm() {
 
             <DrawerBody>
               <Stack spacing="24px">
-                <Box>
-                  <FormLabel htmlFor="name">Name</FormLabel>
-                  <Input
-                    ref={firstField}
-                    id="name"
-                    placeholder="Please enter file name"
-                    value={name}
-                    type="text"
-                  />
-                </Box>
-
                 <Box>
                   <UploadFile onclose={onClose} />
                 </Box>

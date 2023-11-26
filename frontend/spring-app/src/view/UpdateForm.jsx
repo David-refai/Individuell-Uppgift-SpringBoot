@@ -20,13 +20,15 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/Auth';
 import { useNavigate } from 'react-router-dom';
+import SuccessContainer from '../components/SuccessContainer';
 
 export default function UpdateForm() {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const firstField = React.useRef(); // for focus on first field
 
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  // const [success, setSuccess] = useState(false);
 
   const { updateUser, currentUser } = useContext(AuthContext);
   const [error, setError] = useState('');
@@ -52,9 +54,10 @@ export default function UpdateForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
+  
       await updateUser(user);
       if (!isLoading) {
+        
         onClose();
       }
       navigate('/');
@@ -72,12 +75,6 @@ export default function UpdateForm() {
     });
   };
 
-  //   const handleErrors = () => {
-  //     const time = setTimeout(() => {
-  //       setError('');
-  //       clearTimeout(time);
-  //     }, 3000);
-  //   };
 
   useEffect(() => {
     if (error) {
@@ -98,6 +95,7 @@ export default function UpdateForm() {
 
   return (
     <form onSubmit={handleSubmit}>
+      {isLoading && <SuccessContainer message={'Loading...'} />}
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Button
           display={{ base: 'none', md: 'inline-flex' }}

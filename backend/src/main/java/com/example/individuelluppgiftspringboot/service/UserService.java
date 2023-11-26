@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,14 +59,22 @@ public class UserService {
 
 
         User user = new User();
-        var roles = userRegistrationDTO.getRoles();
-        roles.forEach(role1 -> {
-            var role = new Role(role1);
-            user.addRole(role);
-        });
         user.setName(userRegistrationDTO.getName());
         user.setEmail(userRegistrationDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+
+        if (userRegistrationDTO.getRoles() == null) {
+            userRegistrationDTO.setRoles(List.of("USER"));
+        }
+
+        var roles = userRegistrationDTO.getRoles();
+        roles.forEach(roleName -> {
+            Role role = new Role();
+            role.setName(roleName);
+            role.setUser(user);
+            user.addRole(role);
+        });
+
         return userRepository.save(user);
 
     }
@@ -79,7 +88,7 @@ public class UserService {
                 .collect(Collectors.toList());
 
     }
-
+    @Transactional
     public UserDto getUserById(Long id) {
         return userRepository.findById(Math.toIntExact(id))
                 .map(userDTOMapper)

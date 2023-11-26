@@ -1,18 +1,16 @@
-import { Flex, VStack } from "@chakra-ui/react";
+import { Flex } from '@chakra-ui/react';
+import FilesTable from './FilesTable';
+import { useContext } from 'react';
+import SpinnerShow from '../components/SpinnerShow';
+import { FileContext } from '../components/file/File';
 
+export default function Home({ currentUser }) {
+  const { isLoading } = useContext(FileContext);
 
-export default function Home() {
   return (
-    <Flex
-      // bg={'gray.800'}
-      // color={'white'}
-      minH={'100vh'}
-      direction={'column'}
-      align={'center'}
-      w={'full'}
-      // justify={'center'}
-    >
-      <VStack spacing={8} w={'full'} mt={10}></VStack>
+    <Flex direction={'column'} w={'full'}>
+      {<SpinnerShow url={'/'} isLoading={isLoading} />}
+      <FilesTable currentUser={currentUser} />
     </Flex>
   );
 }

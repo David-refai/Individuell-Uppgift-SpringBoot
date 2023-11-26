@@ -1,5 +1,6 @@
 package com.example.individuelluppgiftspringboot.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -33,9 +34,8 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @JsonBackReference
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST , fetch = FetchType.EAGER)
     private List<Role> roles;
 
 

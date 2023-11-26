@@ -14,9 +14,9 @@ import {
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/Auth';
-import SuccessSnipp from '../components/SuccessSnipp';
+import SuccessContainer from '../components/SuccessContainer';
 
-export default function RegistrationForm() {
+export default function CreateUserForm() {
   const { registerUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -98,7 +98,9 @@ export default function RegistrationForm() {
             boxShadow={'lg'}
             p={8}
           >
-            {success && <SuccessSnipp message="User created successfully" />}
+            {loading && (
+              <SuccessContainer message="User created successfully" />
+            )}
 
             <Stack spacing={4}>
               {error && (
@@ -115,6 +117,7 @@ export default function RegistrationForm() {
                   <br />
                 </p>
               )}
+              {loading && <SuccessContainer message={'Loading...'} />}
               <FormControl id="name">
                 <FormLabel>Name</FormLabel>
                 <Input

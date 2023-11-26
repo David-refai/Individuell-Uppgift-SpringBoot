@@ -1,5 +1,6 @@
 package com.example.individuelluppgiftspringboot.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "roles")
 @Getter
 @Setter
-@ToString
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role implements GrantedAuthority {
@@ -26,11 +27,9 @@ public class Role implements GrantedAuthority {
 
     private String name;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    @ToString.Exclude
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 

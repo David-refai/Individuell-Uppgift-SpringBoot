@@ -28,6 +28,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<User> createUserWithRole(@RequestBody UserRegistrationDTO userRegistrationDTO) {
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
+
             // Issue a JWT token and include it in the response headers
             var token = jwtTokenService.issueToken(userRegistrationDTO.getEmail(), userRegistrationDTO.getRoles().toString());
 
@@ -48,13 +49,13 @@ public class AuthenticationController {
 //    log out
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
+
         // Invalidating the current session will effectively log the user out
         var session = request.getSession(false); // false == don't create if it doesn't exist
         if (session != null) {
             session.invalidate(); // this will clear the session for the user
         }
         SecurityContextHolder.clearContext();
-
         // Additionally, you may want to invalidate the token on the client side
         return ResponseEntity.ok().body("Logged out successfully");
     }

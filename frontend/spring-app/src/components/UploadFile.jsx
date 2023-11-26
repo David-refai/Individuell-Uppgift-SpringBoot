@@ -4,15 +4,17 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 
 import { useDropzone } from 'react-dropzone';
-import { FileContext } from './file/File';
+
 import SpinnerShow from './SpinnerShow';
+import { FileContext } from './file/File';
+import SuccessContainer from './SuccessContainer';
 
 
 export default function UploadFile({ onclose }) {
 
   const [files, setFiles] = useState([]);
   const { uploadFiles } = useContext(FileContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
 
   const uploadFile = async () => {
@@ -23,6 +25,8 @@ export default function UploadFile({ onclose }) {
       if (response) {
         setIsLoading(false);
         onclose();
+        <SuccessContainer message={'File uploaded successfully'} />
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);

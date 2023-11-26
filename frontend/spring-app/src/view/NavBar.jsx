@@ -289,7 +289,6 @@ export default function NavBar() {
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Box>
-            {' '}
             <span
               style={{
                 cursor: 'pointer',
@@ -369,7 +368,7 @@ export default function NavBar() {
                       </MenuItem>
                     </Menu>
                   )}
-                  {currentUser ? (
+                  {/* {currentUser ? (
                     
                     <MenuItem
                       onClick={handleLogout}
@@ -389,7 +388,7 @@ export default function NavBar() {
                       <Link to="/login"> Login</Link>
                       
                     </MenuItem>
-                  )}
+                  )} */}
 
                 </MenuList>
               </Menu>

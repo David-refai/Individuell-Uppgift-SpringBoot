@@ -6,8 +6,6 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { AuthProvider } from './components/Auth';
 import { FileProvider } from './components/file/File';
 
-
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/* <BrowserRouter> */}

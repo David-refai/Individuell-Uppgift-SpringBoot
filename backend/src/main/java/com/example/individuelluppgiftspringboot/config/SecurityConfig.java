@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
@@ -73,9 +74,11 @@ public class SecurityConfig {
                 .cors(withDefaults())
 
                 .authorizeHttpRequests(configure -> configure
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/register",
-                                "/api/v1/auth/login").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register",
+                                        "/api/v1/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/file/all").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/file/upload").hasAuthority("ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -83,6 +86,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint())
                 )
+
                 .httpBasic(Customizer.withDefaults());
 
 

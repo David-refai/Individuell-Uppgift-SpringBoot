@@ -3,14 +3,14 @@
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const API_URL = 'api/v1/auth/';
-
+const [isLoading, setIsLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState(null);
-
 
   const isAuthenticated = () => {
     const token = getAuthToken();
@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem('user')) || null
   );
-  const [isLoading, setIsLoading] = useState(false);
 
   const getAuthToken = () => {
     const jwtCookie = document.cookie
@@ -47,6 +46,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(API_URL + 'register', user);
       setIsLoading(true);
+      if (response) {
+        setIsLoading(false);
+      }
       return response.data;
     } catch (error) {
       console.error('Error during registration:', error.response.data.message);
@@ -58,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(API_URL + 'login', user);
       const { jwt } = response.data;
-
+      setIsLoading(true);
       const payload = JSON.parse(atob(jwt.split('.')[1]));
       let expires;
 
@@ -78,7 +80,9 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(userInfo);
       setIsLoading(true);
       setAuthenticated(true);
-
+      if (response) {
+        setIsLoading(false);
+      }
       return response.data;
     } catch (error) {
       console.error('Error during login:', error);
@@ -101,10 +105,17 @@ export const AuthProvider = ({ children }) => {
         }
       );
 
-      document.cookie = `jwt=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=None; Secure; OnlyHttp;`;
+              setIsLoading(true);
+
+
       localStorage.removeItem('user');
+      document.cookie =
+        'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; Secure; SameSite=None;';
       setCurrentUser(null);
       setAuthenticated(false);
+      if (!token) {
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
@@ -124,13 +135,13 @@ export const AuthProvider = ({ children }) => {
           },
         }
       );
-
+        setIsLoading(true);
       // update user in local storage if the user is updating their own profile
       if (user.id === currentUser.id) {
         localStorage.setItem('user', JSON.stringify(user));
         setCurrentUser(user);
       }
-      setIsLoading(true);
+      setIsLoading(false);
       return response.data;
     } catch (error) {
       console.error('Error during user update:', error);
@@ -201,9 +212,9 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     setIsLoading(false);
-      if (authenticated) {
-        setToken(getAuthToken());
-      }
+    if (authenticated) {
+      setToken(getAuthToken());
+    }
   }, [currentUser, authenticated]);
 
   return (

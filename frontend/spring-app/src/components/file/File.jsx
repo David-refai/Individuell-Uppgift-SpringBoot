@@ -7,10 +7,10 @@ import { AuthContext } from '../Auth';
 export const FileContext = createContext();
 
 export const FileProvider = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const API_URL = 'api/v1/file/';
 
   const [authenticated, setAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const { logoutUser, getAuthToken } = useContext(AuthContext);
 
   const uploadFiles = async (file) => {
@@ -28,7 +28,7 @@ export const FileProvider = ({ children }) => {
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(response.data);
-        }, 2000);
+        }, 1000);
       });
     } catch (error) {
       setIsLoading(false);
@@ -37,16 +37,41 @@ export const FileProvider = ({ children }) => {
   };
 
   const fetchFiles = async () => {
-    const response = await axios.get(API_URL + 'all', {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    });
+    const response = await axios.get(API_URL + 'all');
+    setIsLoading(false);
+    console.log(response.data);
     return response.data;
   };
 
   const downloadFile = async (fileId) => {
-    const response = await axios.get(API_URL + 'download/' + fileId);
+    const response = await axios.get(API_URL + 'download/' + fileId, {
+      responseType: 'blob',
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+    setIsLoading(false);
+    return response.data;
+  };
+
+
+  const deleteFile = async (fileId) => {
+    const response = await axios.delete(API_URL + 'delete/' + fileId, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+        setIsLoading(false);
+    return response.data;
+  }
+
+
+  const getFileById = async (fileId) => {
+    const response = await axios.get(API_URL + 'file/' + fileId, {
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
     return response.data;
   };
 
@@ -63,6 +88,9 @@ export const FileProvider = ({ children }) => {
         downloadFile,
         getAuthToken,
         fetchFiles,
+        getFileById,
+        deleteFile,
+        isLoading,
       }}
     >
       {children}

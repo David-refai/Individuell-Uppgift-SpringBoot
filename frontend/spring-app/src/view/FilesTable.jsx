@@ -10,20 +10,7 @@ import {
   TableContainer,
   Button,
   Flex,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
   Box,
-  FormControl,
-  FormLabel,
-  Select,
-  Input,
-  Stack,
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/Auth';
@@ -31,23 +18,58 @@ import SpinnerShow from '../components/SpinnerShow';
 import UpdateForm from './UpdateForm';
 import { FileContext } from '../components/file/File';
 export default function Users() {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const { getAllUsers, deleteUser } = useContext(AuthContext);
-  const { fetchFiles, downloadFile } = useContext(FileContext);
+  const { fetchFiles, downloadFile, deleteFile } = useContext(FileContext);
+  const { currentUser } = useContext(AuthContext);
   const [file, setFile] = useState([]);
 
-  const DeleteUser = async (id) => {
+  const DownloadFile = async (id, fileType, fileName) => {
+    try {
+      // Assuming downloadFile is an asynchronous function that initiates the file download
+      const file = await downloadFile(id);
+
+      // Assuming fetchFiles is an asynchronous function that fetches the updated files
+      const updatedFiles = await fetchFiles();
+
+      // Create a Blob from the fetched data
+      const blob = new Blob([file], { type: fileType });
+
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileName}`;
+      document.body.appendChild(a);
+
+      // Programmatically trigger a click event on the link to start the download
+      a.click();
+
+      // Remove the link from the DOM after the download
+      document.body.removeChild(a);
+
+      // Update the state with the fetched files
+      setFile(updatedFiles);
+      setIsLoading(false);
+      console.log(updatedFiles);
+    } catch (error) {
+      // Handle errors
+      if (error) {
+        setError(error.response?.data.message);
+      }
+    }
+  };
+
+  const handlerDelete = async (id) => {
     try {
       // Delete the user
-      await deleteUser(id);
+      await deleteFile(id);
 
       // Fetch the updated list of users
-      const updatedUsers = await getAllUsers();
+      const updatedFiles = await fetchFiles();
 
       // Update the state with the new list of users
-      setUsers(updatedUsers);
+      setFile(updatedFiles);
 
       setIsLoading(false);
     } catch (error) {
@@ -56,28 +78,46 @@ export default function Users() {
       }
     }
   };
-  useEffect(() => {
-    const getAllFiles = async () => {
-      try {
-        const res = await fetchFiles();
-        setIsLoading(true);
-        setError('');
-        // setUsers(res);
-        setFile(res);
-      } catch (error) {
-        if (error) {
-          setError(error.response?.data.message);
-        }
-      } finally {
-        setIsLoading(false);
+  const getAllFiles = async () => {
+    try {
+      const res = await fetchFiles();
+      setError('');
+      setFile(res);
+      setIsLoading(false);
+    } catch (error) {
+      if (error) {
+        setError(error.response?.data.message);
       }
-    };
+    } 
+  };
+
+  useEffect(() => {
+    
     getAllFiles();
-  }, [isLoading, fetchFiles]);
+  }, []);
+
 
   return (
     <Flex direction="column" align="space-between" justify="center">
-      {isLoading && <SpinnerShow url={'/users'} />}
+      {isLoading ? (
+        <SpinnerShow url={'/'} isLoading={isLoading} />
+      ) : (
+        <>
+          {error && (
+            <Box
+              color="white"
+              bg="red.500"
+              p={3}
+              borderRadius="lg"
+              w="100%"
+              textAlign="center"
+              mb={3}
+            >
+              {error}
+            </Box>
+          )}
+        </>
+      )}
       <TableContainer m={16}>
         <Table variant="simple">
           {/* <TableCaption>Users</TableCaption> */}
@@ -93,24 +133,36 @@ export default function Users() {
               <Tr key={file.id}>
                 <Td>{file.fileName}</Td>
                 <Td>{file.fileType}</Td>
-                <Td>{file.size <
-                  1000.0 ? `${file.size} MB` : `${file.size} KB`
-                } </Td>
+                <Td>
+                  {file.size > 1000000
+                    ? `${(file.size / 1000000).toFixed(2)} MB`
+                    : `${(file.size / 1000).toFixed(2)} KB`}
+
+                </Td>
                 <Td p={3} display="flex" gap={3} alignItems="center" w="100%">
                   <Button
                     colorScheme="teal"
                     variant="outline"
-                    onClick={() => DeleteUser(file.id)}
+                    onClick={() =>
+                      DownloadFile(
+                        file.id,
+                        file.fileType.split('/')[1],
+                        file.fileName
+                      )
+                    }
                   >
-                    Delete
+                    Download
                   </Button>
 
-                  {/* <Button colorScheme="teal" variant="outline">
-                              B
-                              
-                      Edit
-                    </Button> */}
-                  {/* <BasicUsage name={'Edit'} userId={user.id} /> */}
+                  {currentUser?.roles[0] === 'ADMIN' && (
+                  <Button
+                    colorScheme="teal"
+                    variant="outline"
+                    onClick={() => handlerDelete(file.id)}
+                  >
+                    Delete
+                    </Button>
+                  )}
                 </Td>
               </Tr>
             ))}
@@ -120,156 +172,3 @@ export default function Users() {
     </Flex>
   );
 }
-
-// function BasicUsage({ name, userId }) {
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState('');
-//   const { fetchUsers, downloadFile } = useContext(FileContext);
-//   // const [userUpdate, setUserUpdate] = useState({
-//   //   id: userId,
-//   //   name: '',
-//   //   email: '',
-//   //   password: '',
-//   //   roles: '',
-//   // });
-//   const [files , setFiles] = useState([]);
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-
-//   useEffect(() => {
-//     const getAllFiles = async () => {
-//       try {
-//         // const res = await downloadFile(userId);
-//         // setIsLoading(true);
-//         // setUserUpdate((prevUser) => ({
-//         //   ...prevUser,
-//         //   id: userId,
-//         //   name: res?.name || '',
-//         //   email: res?.email || '',
-//         //   password: '',
-//         //   roles: res?.roles || '',
-//         // }));
-
-//         let list = await getAllFiles();
-//         setFiles(list);
-//         // setUserUpdate(list);
-
-//         // setIsLoading(true);
-//         // setError('');
-//         // setUserUpdate(res);
-//       } catch (error) {
-//         if (error) {
-//           setError(error.response?.data.message);
-//         }
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     };
-//     getAllFiles();
-//   }, [isLoading, downloadFile]);
-
-//   // const handleChange = (e) => {
-//   //   setUserUpdate((prevUser) => ({
-//   //     ...prevUser,
-//   //     [e.target.name]: e.target.value,
-//   //   }));
-//   // };
-
-//   // const handleRoleChange = (e) => {
-//   //   setUserUpdate((prevUser) => ({
-//   //     ...prevUser,
-//   //     roles: [e.target.value],
-//   //   }));
-//   // };
-
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-//   //   try {
-//   //     setIsLoading(true);
-//   //     await updateUser(userUpdate);
-//   //     const updateList = await getAllUsers();
-//   //     setUserUpdate(updateList);
-//   //     onClose();
-//   //     window.location.reload();
-//   //   } catch (error) {
-//   //     setError(error.response?.data.message);
-//   //   } finally {
-//   //     setIsLoading(false);
-//   //   }
-//   // };
-
-//   return (
-//     <>
-//       <Button onClick={onOpen}>{name}</Button>
-
-//       <Modal isOpen={isOpen} onClose={onClose}>
-//         <ModalOverlay />
-//         <ModalContent>
-//           <ModalHeader>Modal Title</ModalHeader>
-//           <ModalCloseButton />
-//           <ModalBody>
-//             <Stack spacing="24px">
-//               <Box>
-//                 <FormLabel htmlFor="name">Name</FormLabel>
-//                 <Input
-//                   id="name"
-//                   placeholder="Please enter user name"
-//                   // value={}
-//                   type="text"
-//                   name="name"
-//                   // onChange={handleChange}
-//                 />
-//               </Box>
-
-//               <Box>
-//                 <FormLabel htmlFor="email">Email</FormLabel>
-//                 <Input
-//                   id="email"
-//                   placeholder="Please enter user email"
-//                   value={userUpdate.email}
-//                   type="email"
-//                   name="email"
-//                   onChange={handleChange}
-//                 />
-//               </Box>
-//               <Box>
-//                 <FormLabel htmlFor="password">Password</FormLabel>
-//                 <Input
-//                   id="password"
-//                   placeholder="password"
-//                   value={userUpdate.password}
-//                   type="password"
-//                   name="password"
-//                   onChange={handleChange}
-//                 />
-//               </Box>
-//               <Box>
-//                 <FormControl id="role">
-//                   <FormLabel>Role</FormLabel>
-//                   <Select
-//                     placeholder="Select role"
-//                     name="role"
-//                     onChange={(e) => handleRoleChange(e)}
-//                     value={userUpdate.roles}
-//                   >
-//                     <option value="ADMIN">Admin</option>
-//                     <option value="USER">User</option>
-//                     <option value="MANAGER">Manager</option>
-//                   </Select>
-//                 </FormControl>
-//               </Box>
-//             </Stack>
-//           </ModalBody>
-
-//           <ModalFooter>
-//             <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
-//               Save
-//             </Button>
-//             <Button variant="ghost" onClick={onClose}>
-//               Close
-//             </Button>
-//           </ModalFooter>
-//         </ModalContent>
-//       </Modal>
-//     </>
-//   );
-// }

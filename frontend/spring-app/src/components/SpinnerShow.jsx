@@ -2,19 +2,19 @@ import { Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SpinnerShow = ({url}) => {
+const SpinnerShow = ({url , isLoading}) => {
   const [show, setShow] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    // Hide the spinner after 3s
+    if (!isLoading) {
       setShow(false);
       navigate(url);
-    }, 3000);
-
+    }
     // Clear the timeout when the component unmounts or when the 'show' state changes
-    return () => clearTimeout(timeoutId);
-  }, [url, navigate]);
+   
+  }, [url, navigate, isLoading]);
 
   return (
     <div
