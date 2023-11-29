@@ -27,11 +27,8 @@ public class User implements UserDetails {
             , generator = "user_sequence")
     private int id;
 
-    @Column(name = "name")
     private String name;
-    @Column(unique = true, name = "email")
     private String email;
-    @Column(name = "password")
     private String password;
 
     @JsonBackReference

@@ -29,6 +29,10 @@ import java.util.Set;
         this.roles = roles;
     }
 
+    public UserDto() {
+
+    }
+
 
     @Override
     public String toString() {

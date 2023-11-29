@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:5173") // react app
+
 public class AuthenticationController {
     private final UserService userService;
     private final JwtUtil jwtTokenService;

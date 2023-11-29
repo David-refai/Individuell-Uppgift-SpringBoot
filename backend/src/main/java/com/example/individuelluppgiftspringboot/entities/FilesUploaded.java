@@ -7,8 +7,10 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name = "filesUploaded")
 public class FilesUploaded {
     @Id
     @SequenceGenerator(
@@ -18,20 +20,20 @@ public class FilesUploaded {
     @GeneratedValue(strategy = GenerationType.SEQUENCE
             , generator = "files_sequence")
     private int id;
-    @Column(nullable = false)
+
+    @Column(name = "file_name")
     private String fileName;
-    @Column(nullable = false)
+
+    @Column(name = "file_type")
     private String fileType;
-    private String path;
     @Lob
+    @Column(name = "file_data")
     private byte[] data;
 
-    private String fileDownloadUri;
+    @Column(name = "file_size")
     private double size;
 
 
 
-    public FilesUploaded(String filePath) {
-        this.fileName = filePath;
-    }
+
 }

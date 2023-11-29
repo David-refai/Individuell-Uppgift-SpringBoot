@@ -8,6 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 public class UserRegistrationDTO {
         private final int id;
@@ -22,6 +23,5 @@ public class UserRegistrationDTO {
         @NotBlank(message = "Username is required")
         private List<String> roles;
         private final String username;
-
 
 }
