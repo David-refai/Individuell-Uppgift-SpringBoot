@@ -4,6 +4,7 @@ package com.example.individuelluppgiftspringboot.controller;
 import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
 import com.example.individuelluppgiftspringboot.dto.userdto.UserRegistrationDTO;
 import com.example.individuelluppgiftspringboot.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
 

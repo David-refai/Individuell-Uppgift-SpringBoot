@@ -34,7 +34,7 @@ export default function UpdateForm() {
   const [error, setError] = useState('');
 
   let role = '';
-  if (currentUser?.roles) {
+  if (currentUser?.roles[0]) {
     role = currentUser.roles[0] === 'ROLE_ADMIN' ? 'ADMIN' : 'USER';
     role = currentUser.roles[0] === 'ROLE_MANAGER' ? 'MANAGER' : role;
   } else {
@@ -80,14 +80,14 @@ export default function UpdateForm() {
     if (error) {
       const errorTimeout = setTimeout(() => {
         setError('');
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(errorTimeout);
     }
     if (isLoading) {
       const LoadingTimeout = setTimeout(() => {
         setIsLoading(false);
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(LoadingTimeout);
     }

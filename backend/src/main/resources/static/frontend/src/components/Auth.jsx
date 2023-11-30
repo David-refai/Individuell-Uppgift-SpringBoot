@@ -125,16 +125,20 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = async (user) => {
     try {
+      setIsLoading(true);
       const token = getAuthToken();
-      const response = await axios.put(`${API_URL}${user.id}`, user, {
+      const response = await axios.put(API_URL + "users/" + user.id, user, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-      setIsLoading(true);
+    
+
+      //  get id from user local storage
+      const userId = JSON.parse(localStorage.getItem('user')).id;
       // update user in local storage if the user is updating their own profile
-      if (user.id === user.id) {
+      if (userId === user.id) {
         localStorage.setItem('user', JSON.stringify(user));
         setUser(user);
       }
@@ -148,6 +152,7 @@ export const AuthProvider = ({ children }) => {
 
   const getAllUsers = async () => {
     try {
+      setIsLoading(true);
       const token = getAuthToken();
       const response = await axios.get(API_URL + 'users/all', {
         headers: {
@@ -156,7 +161,7 @@ export const AuthProvider = ({ children }) => {
         },
       });
 
-      setIsLoading(true);
+      setIsLoading(false);
       return response.data;
     } catch (error) {
       console.error('Error during user update:', error);
@@ -166,6 +171,7 @@ export const AuthProvider = ({ children }) => {
 
   const deleteUser = async (id) => {
     try {
+      setIsLoading(true);
       const token = getAuthToken();
       const response = await axios.delete(API_URL + 'users/' + id, {
         headers: {
@@ -174,6 +180,7 @@ export const AuthProvider = ({ children }) => {
         },
       });
       getAllUsers();
+      setIsLoading(false);
       return response.data;
     } catch (error) {
       console.error('Error during user update:', error);
@@ -183,6 +190,7 @@ export const AuthProvider = ({ children }) => {
 
   const getUserById = async (id) => {
     try {
+      setIsLoading(true);
       const token = getAuthToken();
       if (token) {
         const response = await axios.get(API_URL + '/users/' + id, {
@@ -191,6 +199,7 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
           },
         });
+        setIsLoading(false);
         return response.data;
       }
       return null;
@@ -207,7 +216,7 @@ export const AuthProvider = ({ children }) => {
     if (authenticated) {
       setToken(getAuthToken());
     }
-  }, [authenticated]);
+  }, [authenticated, setIsLoading, setToken]);
 
   return (
     <AuthContext.Provider

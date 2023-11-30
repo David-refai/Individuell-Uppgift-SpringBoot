@@ -22,7 +22,7 @@ import static org.springframework.web.servlet.function.ServerResponse.status;
 
 @RestController
 @RequestMapping("/api/v1/file")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class FileController {
 
     private final FileRepository fileRepository;

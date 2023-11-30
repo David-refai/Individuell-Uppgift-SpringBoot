@@ -42,7 +42,7 @@ public class SecurityConfig{
     @Autowired
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
-                          @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver) {
+                          HandlerExceptionResolver handlerExceptionResolver) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.handlerExceptionResolver = handlerExceptionResolver;
@@ -81,7 +81,6 @@ public class SecurityConfig{
                                        "/", "/api/v1/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/", "/api/v1/file/all").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/file/upload").hasAuthority("ADMIN")
-
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
@@ -90,7 +89,7 @@ public class SecurityConfig{
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authenticationEntryPoint())
                 )
-//                .formLogin(Customizer.withDefaults())
+
                 .httpBasic(Customizer.withDefaults());
 
 

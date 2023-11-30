@@ -111,9 +111,9 @@ export default function Users() {
 }
 
 function BasicUsage({ name, userId }) {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { updateUser, getUserById, getAllUsers } = useContext(AuthContext);
+  const { updateUser, getUserById, getAllUsers, isLoading } =
+    useContext(AuthContext);
   const [userUpdate, setUserUpdate] = useState({
     id: userId,
     name: '',
@@ -124,10 +124,10 @@ function BasicUsage({ name, userId }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUsers = async (e) => {
+   
       try {
         const res = await getUserById(userId);
-        setIsLoading(true);
         setUserUpdate((prevUser) => ({
           ...prevUser,
           id: userId,
@@ -140,16 +140,15 @@ function BasicUsage({ name, userId }) {
         let list = await getAllUsers();
         setUserUpdate(list);
 
-        setIsLoading(true);
+    
         setError('');
         setUserUpdate(res);
       } catch (error) {
         if (error) {
           setError(error.response?.data.message);
         }
-      } finally {
-        setIsLoading(false);
-      }
+      } 
+   
     };
     fetchUsers();
   }, [getAllUsers, getUserById, userId, updateUser]);
@@ -167,21 +166,20 @@ function BasicUsage({ name, userId }) {
       roles: [e.target.value],
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
       await updateUser(userUpdate);
+      
       const updateList = await getAllUsers();
+      if(!isLoading) {
       setUserUpdate(updateList);
       onClose();
-      window.location.reload();
+        window.location.reload();
+      }
     } catch (error) {
       setError(error.response?.data.message);
-    } finally {
-      setIsLoading(false);
-    }
+    } 
   };
 
   return (
@@ -200,7 +198,7 @@ function BasicUsage({ name, userId }) {
                 <Input
                   id="name"
                   placeholder="Please enter user name"
-                  value={userUpdate?.name}
+                  value={userUpdate.name}
                   type="text"
                   name="name"
                   onChange={handleChange}
@@ -227,7 +225,7 @@ function BasicUsage({ name, userId }) {
                   type="password"
                   name="password"
                   onChange={handleChange}
-                  autoComplete = "off"
+                  // autoComplete = "off"
 
                 />
               </Box>
@@ -238,7 +236,7 @@ function BasicUsage({ name, userId }) {
                     placeholder="Select role"
                     name="role"
                     onChange={handleRoleChange}
-                    value={userUpdate?.roles[0]}
+                    value={userUpdate?.roles}
                   >
                     <option value="ADMIN">Admin</option>
                     <option value="USER">User</option>
@@ -250,7 +248,10 @@ function BasicUsage({ name, userId }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+            <Button colorScheme="blue" mr={3} onClick={handleSubmit}
+              isLoading={isLoading}
+              loadingText="Submitting"
+            >
               Save
             </Button>
             <Button variant="ghost" onClick={onClose}>

@@ -61,10 +61,10 @@ export function ModalRegisterForm({ user:currentUser}) {
     e.preventDefault();
    
     const res = await registerUser(user);
-    if (!res) {
-      setErrorLocal(error);
-    } else {
-      handleClose();
+
+    if (res) {
+      setIsOpenModal(false);
+      navigate('/login');
     }
 
   };
@@ -95,19 +95,19 @@ export function ModalRegisterForm({ user:currentUser}) {
             <ModalCloseButton />
             <ModalBody>
               <form onSubmit={handleSubmit}>
-
                 <Stack spacing={8} w={'full'} py={0} px={0}>
                   <Heading fontSize={'4xl'}>Sign in to your account</Heading>
                   {error && (
-                    <Text color={'red.500'}
+                    <Text
+                      color={'red.500'}
                       fontSize={'lg'}
                       fontWeight={600}
                       textAlign={'center'}
                       // p={2}
                       shadow={'base'}
-                    
-                    
-                    >{errorLocal}</Text>
+                    >
+                      {errorLocal}
+                    </Text>
                   )}
                   <Box
                     rounded={'lg'}
@@ -152,8 +152,11 @@ export function ModalRegisterForm({ user:currentUser}) {
                           _hover={{
                             bg: 'blue.500',
                           }}
-                          type="submit"
                           isLoading={isLoading}
+                          loadingText="Loading"
+                          variant="outline"
+                          spinnerPlacement="end"
+                          type="submit"
                         >
                           Sign in
                         </Button>

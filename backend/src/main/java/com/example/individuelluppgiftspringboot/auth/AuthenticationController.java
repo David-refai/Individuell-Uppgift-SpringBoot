@@ -5,6 +5,7 @@ import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import com.example.individuelluppgiftspringboot.jwtUtility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +27,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUserWithRole(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+    public ResponseEntity<User> createUserWithRole(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
 
             // Issue a JWT token and include it in the response headers
@@ -39,7 +40,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
       AuthenticationResponse response = authenticationService.login(authenticationRequest);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, response.jwt())
