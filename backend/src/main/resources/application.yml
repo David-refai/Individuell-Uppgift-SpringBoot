@@ -1,6 +1,11 @@
 
 spring:
-
+  datasource:
+# save the database in the backend folder
+    url:  jdbc:sqlite:database.db
+    driver-class-name: org.sqlite.JDBC
+    username: root
+    password: root
   sql:
     init:
       mode: always

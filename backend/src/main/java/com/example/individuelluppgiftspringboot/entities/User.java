@@ -32,7 +32,7 @@ public class User implements UserDetails {
     private String password;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST , fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
     private List<Role> roles;
 
 

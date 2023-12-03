@@ -3,6 +3,7 @@ package com.example.individuelluppgiftspringboot.controller;
 
 import com.example.individuelluppgiftspringboot.dto.userdto.UserDto;
 import com.example.individuelluppgiftspringboot.dto.userdto.UserRegistrationDTO;
+import com.example.individuelluppgiftspringboot.entities.User;
 import com.example.individuelluppgiftspringboot.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +30,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable int id) {
             var userById = userService.getUserById(id);
             return ResponseEntity.ok(userById);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDto) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDto) {
         var updatedUser = userService.updateUser(id, userDto);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
