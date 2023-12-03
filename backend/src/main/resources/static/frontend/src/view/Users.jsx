@@ -225,7 +225,7 @@ function BasicUsage({ name, userId }) {
                   type="password"
                   name="password"
                   onChange={handleChange}
-                  // autoComplete = "off"
+
 
                 />
               </Box>
@@ -240,7 +240,6 @@ function BasicUsage({ name, userId }) {
                   >
                     <option value="ADMIN">Admin</option>
                     <option value="USER">User</option>
-                    <option value="MANAGER">Manager</option>
                   </Select>
                 </FormControl>
               </Box>
@@ -251,6 +250,8 @@ function BasicUsage({ name, userId }) {
             <Button colorScheme="blue" mr={3} onClick={handleSubmit}
               isLoading={isLoading}
               loadingText="Submitting"
+                spinnerPlacement="end"
+                    type={'submit'}
             >
               Save
             </Button>

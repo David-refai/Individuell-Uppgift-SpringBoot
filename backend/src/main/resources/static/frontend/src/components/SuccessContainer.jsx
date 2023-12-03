@@ -8,12 +8,16 @@ const SuccessContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+//  add emotion/styled
+  transform-style: preserve-3d;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 `;
 
 const SuccessMessage = styled.h1`
   color: #28a745; // Green color for success
-  font-size: 2rem;
+  font-size: 1rem;
 `;
 
 const SuccessComponent = ({ message }) => {

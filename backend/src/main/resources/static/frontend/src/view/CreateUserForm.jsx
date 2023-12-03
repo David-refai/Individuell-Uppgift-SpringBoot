@@ -15,11 +15,13 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/Auth';
 import SuccessContainer from '../components/SuccessContainer';
+import {useNavigate} from "react-router-dom";
 
 export default function CreateUserForm() {
   const { registerUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+    const navigator = useNavigate();
   const [error, setError] = useState('');
   const [user, setUser] = useState({
     name: '',
@@ -35,15 +37,22 @@ export default function CreateUserForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const res = await registerUser(user);
       if (res) {
-        setLoading(true);
         setError('');
+        setUser({
+          name: '',
+          email: '',
+          password: '',
+          roles: '',
+        });
+        setLoading(false);
+        navigator('/users');
       }
     } catch (error) {
-      if (error) {
         setError(error.response?.data.message);
-      }
+        setLoading(false);
     }
   };
 
@@ -115,7 +124,7 @@ export default function CreateUserForm() {
                   <br />
                 </p>
               )}
-              {loading && <SuccessContainer message={'Loading...'} />}
+
               <FormControl id="name">
                 <FormLabel>Name</FormLabel>
                 <Input
@@ -154,7 +163,6 @@ export default function CreateUserForm() {
                 >
                   <option value="ADMIN">Admin</option>
                   <option value="USER">User</option>
-                  <option value="MANAGER">Manager</option>
                 </Select>
               </FormControl>
               <Stack spacing={10}>

@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 import AppLayout from '../../frontend/src/view/AppLayout';
 import Home from '../../frontend/src/view/Home';
-import UpdateForm from '../../frontend/src/view/UpdateForm';
 import { AuthContext } from './components/Auth';
 import UploadForm from '../../frontend/src/view/UploadForm';
 import Users from '../../frontend/src/view/Users';
@@ -18,6 +17,7 @@ import CreateUserForm from '../../frontend/src/view/CreateUserForm';
 import { ModalRegisterForm } from '../../frontend/src/view/ModalRegisterForm';
 import UnauthorizedError from '../../frontend/src/view/UnauthorizedError';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorHandler from "./view/ErrorHandlar.jsx";
 
 const App = () => {
   const { user } = useContext(AuthContext);
@@ -59,10 +59,7 @@ const App = () => {
     {
       element: (
         <ProtectedRoute
-          isAllowed={
-            !!user &&
-            (user?.roles[0]?.includes('ROLE_ADMIN') ||
-              user?.roles[0]?.includes('ADMIN'))
+          isAllowed={!!user && user?.roles[0]?.includes('ADMIN')
           }
           redirectPath="/"
           user={user}
@@ -70,7 +67,6 @@ const App = () => {
           <AppLayout>
             <CreateUserForm />
             <UploadForm />
-            <UpdateForm />
             <Users user={user} />
             <ModalLoginForm />
           </AppLayout>
@@ -85,10 +81,7 @@ const App = () => {
           path: '/upload',
           element: <UploadForm />,
         },
-        {
-          path: '/update/:id',
-          element: <UpdateForm />,
-        },
+
         {
           path: '/users',
           element: <Users />,
@@ -110,10 +103,7 @@ const App = () => {
     {
       element: (
         <ProtectedRoute
-          isAllowed={
-            user?.roles[0]?.includes('ROLE_USER') ||
-            user?.roles[0]?.includes('USER')
-          }
+          isAllowed={!!user && user?.roles[0]?.includes('USER')}
           redirectPath="/unauthorized"
           user={user}
         >
@@ -144,7 +134,7 @@ const App = () => {
     },
     {
       path: '/*',
-      element: <Navigate to="/error" />,
+      element: <ErrorHandler />,
     },
   ]);
 

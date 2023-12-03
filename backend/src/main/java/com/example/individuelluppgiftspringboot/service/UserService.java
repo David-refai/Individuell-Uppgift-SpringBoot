@@ -41,12 +41,7 @@ public class UserService {
         this.userDTOMapper = userDTOMapper;
     }
 
-    public void existsByEmail(String email) {
-        userRepository.getByEmail(email) // Optional<User>
-                .ifPresent(user -> {
-                    throw new ExistsEmailException("Email already exists");
-                });
-    }
+
 
 
     //    save user with roles
@@ -89,13 +84,19 @@ public class UserService {
 
     }
     @Transactional
-    public UserDto getUserById(Long id) {
-        return userRepository.findById(Math.toIntExact(id))
-                .map(userDTOMapper)
+    public UserDto getUserById(int id) {
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        return userDTOMapper.apply(user);
     }
 
-
+    public boolean existsByEmail(String email) {
+        userRepository.getByEmail(email) // Optional<User>
+                .ifPresent(user -> {
+                    throw new ExistsEmailException("Email already exists");
+                });
+        return false;
+    }
     private void validateUserDto(@Valid UserRegistrationDTO user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             throw new HandleMethodArgumentNotValid("Name is required");
@@ -109,13 +110,10 @@ public class UserService {
 
     }
 
-    public UserDto updateUser(Long id, UserRegistrationDTO userDto) {
-        if (userDto.getName() == null || userDto.getName().isEmpty()) {
-            throw new HandleMethodArgumentNotValid("Name is required");
-        }
-        if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
-            throw new HandleMethodArgumentNotValid("Email is required");
-        }
+    public User updateUser(Long id, UserRegistrationDTO userDto) {
+            validateUserDto(userDto);
+
+            existsByEmail(userDto.getEmail());
 
         Optional<User> optionalUser = userRepository.findById(Math.toIntExact(id));
         if (optionalUser.isPresent()) {
@@ -131,21 +129,22 @@ public class UserService {
 
             user.setRoles(userDto.getRoles().stream().map(Role::new).collect(Collectors.toList()));
             userRepository.save(user);
-            return userRepository.findById(Math.toIntExact(id))
-                    .map(userDTOMapper)
-                    .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+            return user;
         } else {
             // Handle the case where the user with the specified ID is not found
             throw new HandleMethodArgumentNotValid("User not found with ID: " + id);
         }
     }
 
-    public void deleteUser(Long id) {
-        var user = userRepository.findById(Math.toIntExact(id))
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
-        var roles = user.getRoles();
-        roleRepository.deleteAll(roles);
-        userRepository.delete(user);
+    public Optional<User> deleteUser(int id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            userRepository.deleteById(id);
+            return optionalUser;
+        } else {
+            // Handle the case where the user with the specified ID is not found
+            throw new HandleMethodArgumentNotValid("User not found with ID: " + id);
+        }
     }
 
 

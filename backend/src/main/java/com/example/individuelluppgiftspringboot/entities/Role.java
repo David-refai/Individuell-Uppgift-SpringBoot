@@ -28,7 +28,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
 
