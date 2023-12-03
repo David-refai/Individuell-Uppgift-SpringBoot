@@ -13,15 +13,18 @@
 git clone https://github.com/David-refai/Individuell-Uppgift-SpringBoot.git
 
 2. Navigate to the project directory:
+
 cd Individuell-Uppgift-SpringBoot
 
-3.Build and run the Spring Boot application:
+3. Build and run the Spring Boot application:
+
 ./mvnw clean install
 ./mvnw spring-boot:run
 
 The application should be accessible at http://localhost:8080.
 
 4. Setup and run the frontend:
+
 cd src/main/resources/static/frontend
 npm install
 npm run dev
