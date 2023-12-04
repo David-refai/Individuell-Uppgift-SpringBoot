@@ -13,6 +13,7 @@ import com.example.individuelluppgiftspringboot.exception.ResourceNotFoundExcept
 import com.example.individuelluppgiftspringboot.mapper.UserDTOMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,18 +85,19 @@ public class UserService {
 
     }
     @Transactional
-    public UserDto getUserById(int id) {
-        var user = userRepository.findById(id)
+    public User getUserById(int id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
-        return userDTOMapper.apply(user);
     }
 
     public boolean existsByEmail(String email) {
-        userRepository.getByEmail(email) // Optional<User>
+    userRepository.getByEmail(email)
                 .ifPresent(user -> {
                     throw new ExistsEmailException("Email already exists");
                 });
         return false;
+
+
     }
     private void validateUserDto(@Valid UserRegistrationDTO user) {
         if (user.getName() == null || user.getName().isEmpty()) {
@@ -110,31 +112,42 @@ public class UserService {
 
     }
 
-    public User updateUser(Long id, UserRegistrationDTO userDto) {
-            validateUserDto(userDto);
+    public void updateUser(Long id, UserRegistrationDTO userRegistrationRequest) {
+        User user = getUserById(Math.toIntExact(id));
+        
+            boolean updated = false;
 
-            existsByEmail(userDto.getEmail());
-
-        Optional<User> optionalUser = userRepository.findById(Math.toIntExact(id));
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            user.setName(userDto.getName());
-            user.setEmail(userDto.getEmail());
-
+            if (userRegistrationRequest.getName() != null && !userRegistrationRequest.getName().equals(user.getName())) {
+                user.setName(userRegistrationRequest.getName());
+                updated = true;
+            }
             // Check if a new password is provided
-            if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            if (userRegistrationRequest.getPassword() != null && !userRegistrationRequest.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(userRegistrationRequest.getPassword()));
+                updated = true;
             }
 
-            user.setRoles(userDto.getRoles().stream().map(Role::new).collect(Collectors.toList()));
+            // Check if a new role is provided
+            if (userRegistrationRequest.getRoles() != null && !userRegistrationRequest.getRoles().isEmpty()) {
+                user.setRoles(userRegistrationRequest.getRoles().stream().map(Role::new).collect(Collectors.toList()));
+                updated = true;
+            }
+
+            // Check if a new email is provided
+            if (userRegistrationRequest.getEmail() != null && !userRegistrationRequest.getEmail().equals(user.getEmail())) {
+                existsByEmail(userRegistrationRequest.getEmail());
+                user.setEmail(userRegistrationRequest.getEmail());
+                updated = true;
+            }else if(userRegistrationRequest.getEmail().equals(user.getEmail())){
+                updated = true;
+            }
+            if (!updated) {
+                throw new ExistsEmailException("No changes were made");
+            }
             userRepository.save(user);
-            return user;
-        } else {
-            // Handle the case where the user with the specified ID is not found
-            throw new HandleMethodArgumentNotValid("User not found with ID: " + id);
+
+
         }
-    }
 
     public Optional<User> deleteUser(int id) {
         Optional<User> optionalUser = userRepository.findById(id);

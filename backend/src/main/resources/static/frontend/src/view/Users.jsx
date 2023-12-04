@@ -134,7 +134,7 @@ function BasicUsage({ name, userId }) {
           name: res?.name || '',
           email: res?.email || '',
           password: '',
-          roles: res?.roles[0] || '',
+          roles: res?.roles || '',
         }));
 
         let list = await getAllUsers();

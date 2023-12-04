@@ -82,6 +82,7 @@ public class FileController {
         }
     }
 
+    // Download a file
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Long fileId) {
 //        Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);
@@ -120,7 +121,8 @@ public class FileController {
       }
     }
 
-    @DeleteMapping("/delete/{fileId}")
+    // Delete a file
+    @DeleteMapping("/delete-file/{fileId}")
     public ResponseEntity<?> deleteFile(@PathVariable Long fileId) {
         Optional<FilesUploaded> fileOptional = Optional.ofNullable(jdbcTemplate.queryForObject(
                 "SELECT * FROM files_uploaded WHERE id = ?",
@@ -142,14 +144,14 @@ public class FileController {
                     file.getId()
             );
 
-//            fileRepository.deleteById(fileId);
+
             return new ResponseEntity<>( HttpStatus.OK);
         } catch (NotFoundFileException notFoundFileException) {
             throw new NotFoundFileException("File not found with id " + fileId);
         }
     }
 
-    @GetMapping("/file/{fileId}")
+    @GetMapping("/{fileId}")
     public ResponseEntity<FilesUploaded> getFileById(@PathVariable Long fileId) {
         Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);
         if (fileOptional.isEmpty()) {
@@ -161,6 +163,7 @@ public class FileController {
         return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
+    // Get all files
     @GetMapping("/all")
     public java.util.List<FilesUploaded> getAllFiles() {
 //        return fileRepository.findAll();

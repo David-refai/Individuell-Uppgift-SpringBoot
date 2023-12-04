@@ -145,7 +145,7 @@ class UserServiceTest {
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
         // When
-        UserDto actual = userService.getUserById(id);
+        User actual = userService.getUserById(id);
 
         // Then
         verify(userRepository).findById(id);

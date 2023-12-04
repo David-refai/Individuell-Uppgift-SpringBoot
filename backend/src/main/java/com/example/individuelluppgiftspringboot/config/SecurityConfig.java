@@ -77,10 +77,14 @@ public class SecurityConfig{
                 .cors(withDefaults())
                 .authorizeHttpRequests(configure -> configure
 
-                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register",
-                                       "/", "/api/v1/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/", "/api/v1/file/all").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/file/upload").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/file/download/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users/all-users").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/users/update-user/{id}").hasAuthority("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement

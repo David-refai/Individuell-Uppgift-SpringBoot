@@ -127,14 +127,12 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const token = getAuthToken();
-      const response = await axios.put(API_URL + "users/" + user.id, user, {
+      const response = await axios.put(API_URL + "users/update-user/" + user.id, user, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
-    
-
       //  get id from user local storage
       const userId = JSON.parse(localStorage.getItem('user')).id;
       // update user in local storage if the user is updating their own profile
@@ -145,7 +143,6 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(false);
       return response.data;
     } catch (error) {
-      console.error('Error during user update:', error);
       setError(error.response?.data.message);
     }
   };
@@ -173,7 +170,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const token = getAuthToken();
-      const response = await axios.delete(API_URL + 'users/' + id, {
+      const response = await axios.delete(API_URL + 'users/delete-user/' + id, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,

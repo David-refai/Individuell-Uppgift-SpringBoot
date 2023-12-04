@@ -22,6 +22,12 @@ public class UserController {
     }
 
 
+    @PostMapping("/create-user")
+    public ResponseEntity<User> createUserWithRole(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
+            User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
+            return ResponseEntity.ok(savedUser);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         var allUsers = userService.getAllUsers();
@@ -30,18 +36,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable int id) {
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
             var userById = userService.getUserById(id);
             return ResponseEntity.ok(userById);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update-user/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDto) {
-        var updatedUser = userService.updateUser(id, userDto);
-        return ResponseEntity.ok(updatedUser);
+       userService.updateUser(id, userDto);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-user/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();

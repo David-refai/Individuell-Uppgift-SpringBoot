@@ -54,7 +54,7 @@ export const FileProvider = ({ children }) => {
   };
 
   const deleteFile = async (fileId) => {
-    const response = await axios.delete(API_URL + 'delete/' + fileId, {
+    const response = await axios.delete(API_URL + 'delete-file/' + fileId, {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },
@@ -65,7 +65,7 @@ export const FileProvider = ({ children }) => {
   };
 
   const getFileById = async (fileId) => {
-    const response = await axios.get(API_URL + 'file/' + fileId, {
+    const response = await axios.get(API_URL  + fileId, {
       headers: {
         Authorization: `Bearer ${getAuthToken()}`,
       },
