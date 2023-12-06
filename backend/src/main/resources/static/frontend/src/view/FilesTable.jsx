@@ -11,7 +11,6 @@ import {
   Button,
   Flex,
   Box,
-  Avatar,
   Image,
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
@@ -95,7 +94,7 @@ export default function FilesTable({ user}) {
         }
       };
 
-      getAllFiles();
+      getAllFiles().then(r => r);
 
   
     }, [isLoading, fetchFiles, deleteFile ]);
@@ -114,6 +113,7 @@ export default function FilesTable({ user}) {
     docx: './images/docx-image.png',
     odt: './images/docx-image.png',
     pdf: './images/pdf-image.svg',
+    epub: './images/epub-image.png',
     zip: './images/zip-image.png',
     txt: './images/text-image.webp',
     pages: './images/text-image.webp',

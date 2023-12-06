@@ -5,6 +5,7 @@ package com.example.individuelluppgiftspringboot.controller;
 import com.example.individuelluppgiftspringboot.dao.FileRepository;
 import com.example.individuelluppgiftspringboot.dto.FileUploadResponse;
 import com.example.individuelluppgiftspringboot.entities.FilesUploaded;
+import com.example.individuelluppgiftspringboot.exception.HandleMethodArgumentNotValid;
 import com.example.individuelluppgiftspringboot.exception.NotFoundFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,53 +37,40 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file)
-
-    {
-        try {
-            if (file.isEmpty()) {
-                return new ResponseEntity<>("Uploaded file is empty", HttpStatus.BAD_REQUEST);
-            }
-            String fileName = file.getOriginalFilename();
-            String contentType = file.getContentType();
-            byte[] data = file.getBytes();
-
-
-            // Create and save FilesUploaded entity
-            FilesUploaded filesUploadedEntity = new FilesUploaded();
-            filesUploadedEntity.setFileName(fileName);
-            filesUploadedEntity.setFileType(contentType);
-            filesUploadedEntity.setData(data);
-                filesUploadedEntity.setSize(file.getSize());
-
-//            fileRepository.save(filesUploadedEntity);
-            jdbcTemplate.update(
-                    "INSERT INTO files_uploaded (file_name, file_type, file_data, file_size) VALUES (?, ?, ?, ?)",
-                    filesUploadedEntity.getFileName(),
-                    filesUploadedEntity.getFileType(),
-                    filesUploadedEntity.getData(),
-                    filesUploadedEntity.getSize()
-
-            );
-
-            // Fetch the ID of the newly inserted record
-            Long id = jdbcTemplate.queryForObject("SELECT last_insert_rowid()", Long.class);
-            filesUploadedEntity.setId(Integer.parseInt(String.valueOf(id)));
-
-
-            FileUploadResponse response = new FileUploadResponse();
-            response.setId(filesUploadedEntity.getId());
-            response.setFileName(fileName);
-            response.setFileType(contentType);
-            response.setData(filesUploadedEntity.getData());
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (IOException e) {
-            logger.error("Error occurred during file upload", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public FileUploadResponse saveFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new HandleMethodArgumentNotValid("File is empty");
         }
+
+        String fileName = file.getOriginalFilename();
+        String contentType = file.getContentType();
+        byte[] data = file.getBytes();
+        String fileSize = String.valueOf(file.getSize());
+
+        // Create and save FilesUploaded entity
+        FilesUploaded filesUploadedEntity = new FilesUploaded();
+        filesUploadedEntity.setFileName(fileName);
+        filesUploadedEntity.setFileType(contentType);
+        filesUploadedEntity.setData(data);
+        filesUploadedEntity.setSize(Double.parseDouble(fileSize));
+
+        // Create and save FileUploadResponse
+        FileUploadResponse response = new FileUploadResponse();
+        response.setId(filesUploadedEntity.getId());
+        response.setFileName(filesUploadedEntity.getFileName());
+        response.setFileType(filesUploadedEntity.getFileType());
+        response.setData(filesUploadedEntity.getData());
+
+        fileRepository.save(filesUploadedEntity);
+
+           return response;
     }
 
-    // Download a file
+    /**
+     * Download a file
+     * @param fileId
+     * @return The file
+     */
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Long fileId) {
 //        Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);
@@ -138,19 +126,19 @@ public class FileController {
         ));
 
         try {
+
             FilesUploaded file = fileOptional.get();
             jdbcTemplate.update(
                     "DELETE FROM files_uploaded WHERE id = ?",
                     file.getId()
             );
-
-
             return new ResponseEntity<>( HttpStatus.OK);
         } catch (NotFoundFileException notFoundFileException) {
             throw new NotFoundFileException("File not found with id " + fileId);
         }
     }
 
+    // Get a file by id
     @GetMapping("/{fileId}")
     public ResponseEntity<FilesUploaded> getFileById(@PathVariable Long fileId) {
         Optional<FilesUploaded> fileOptional = fileRepository.findById(fileId);

@@ -22,12 +22,21 @@ public class UserController {
     }
 
 
+    /**
+     * Register a new user.
+     * @param userRegistrationDTO The user to register.
+     * @return The registered user.
+     */
     @PostMapping("/create-user")
     public ResponseEntity<User> createUserWithRole(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
             return ResponseEntity.ok(savedUser);
     }
 
+    /**
+     * Get all users. Will only work if the user is an admin.
+     * @return All users.
+     */
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         var allUsers = userService.getAllUsers();
@@ -35,14 +44,19 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
+    /**
+     * Get a user by id.
+     * @param id The id of the user to get.
+     * @return The user with the specified id.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable int id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable int id) {
             var userById = userService.getUserById(id);
             return ResponseEntity.ok(userById);
     }
 
     @PutMapping("/update-user/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDto) {
        userService.updateUser(id, userDto);
         return ResponseEntity.ok().build();
     }

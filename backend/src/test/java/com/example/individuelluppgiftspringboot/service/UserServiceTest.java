@@ -145,7 +145,7 @@ class UserServiceTest {
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
         // When
-        User actual = userService.getUserById(id);
+        UserDto actual = userService.getUserById(id);
 
         // Then
         verify(userRepository).findById(id);
@@ -154,42 +154,42 @@ class UserServiceTest {
 
     @Test
     void updateUser() {
-        //  Given
-        int id = 1;
-        User user = User.builder()
-                .id(1)
+        // Given
+        int userId = 1;
+
+        User existingUser = User.builder()
+                .id(userId)
                 .name("Test")
                 .email("test@test.com")
                 .password("test123")
                 .roles(List.of(new Role("ADMIN")))
                 .build();
 
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
-
-
-        String email = "david@david.com";
-        UserRegistrationDTO newUser = UserRegistrationDTO.builder()
-                .id(1)
+        String newEmail = "david@david.com";
+        UserRegistrationDTO updatedUserDTO = UserRegistrationDTO.builder()
+                .id(userId)
                 .name("David")
-                .email(email)
+                .email(newEmail)
                 .password("test123")
                 .roles(Collections.singletonList("USER"))
                 .build();
 
-
         // When
-        userService.updateUser((long) id, newUser);
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+        userService.updateUser((long) userId, updatedUserDTO);
+
         // Then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(userArgumentCaptor.capture());
+
         User capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser.getName()).isEqualTo(user.getName());
-        assertThat(capturedUser.getEmail()).isEqualTo(user.getEmail());
-
-
-
+        assertThat(capturedUser.getId()).isEqualTo(userId); // Ensure ID remains the same
+        assertThat(capturedUser.getName()).isEqualTo(updatedUserDTO.getName());
+        assertThat(capturedUser.getEmail()).isEqualTo(updatedUserDTO.getEmail());
     }
+
 
     @Test
     void testDeleteUser() {

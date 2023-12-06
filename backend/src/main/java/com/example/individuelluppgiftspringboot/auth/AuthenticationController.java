@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+
+
 @RestController
 @RequestMapping("/api/v1/auth")
 
@@ -19,6 +21,13 @@ public class AuthenticationController {
     private final JwtUtil jwtTokenService;
     private final AuthenticationService authenticationService;
 
+
+    /**
+     * Constructor for the AuthenticationController class.
+     * @param userService The UserService.
+     * @param jwtTokenService The JwtUtil.
+     * @param authenticationService The AuthenticationService.
+     */
     public AuthenticationController(UserService userService, JwtUtil jwtTokenService, AuthenticationService authenticationService) {
         this.userService = userService;
         this.jwtTokenService = jwtTokenService;
@@ -26,19 +35,28 @@ public class AuthenticationController {
     }
 
 
+    /**
+     * Register a new user.
+     * @param userRegistrationDTO The user to register.
+     * @return The registered user.
+     */
+
     @PostMapping("/register")
     public ResponseEntity<User> createUserWithRole(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO) {
             User savedUser = userService.saveUserWithRoles(userRegistrationDTO);
 
             // Issue a JWT token and include it in the response headers
-            var token = jwtTokenService.issueToken(userRegistrationDTO.getEmail(), userRegistrationDTO.getRoles().toString());
+//            var token = jwtTokenService.issueToken(userRegistrationDTO.getEmail(), userRegistrationDTO.getRoles().toString());
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .body(savedUser);
+            return ResponseEntity.ok().body(savedUser);
 
     }
 
+    /**
+     * Login a user.
+     * @param authenticationRequest The user to login.
+     * @return The logged in user.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest authenticationRequest) {
       AuthenticationResponse response = authenticationService.login(authenticationRequest);
@@ -47,7 +65,11 @@ public class AuthenticationController {
                 .body(response);
     }
 
-//    log out
+    /**
+     * Logout a user.
+     * @param request The user to logout.
+     * @return The logged out user.
+     */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
 

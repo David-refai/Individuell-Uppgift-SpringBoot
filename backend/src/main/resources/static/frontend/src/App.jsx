@@ -20,7 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorHandler from "./view/ErrorHandlar.jsx";
 
 const App = () => {
-  const { user } = useContext(AuthContext);
+  const { user, getAllUsers, deleteUser, getUserById, isLoading, updateUser  } = useContext(AuthContext);
 
   const router = createBrowserRouter([
     {
@@ -84,7 +84,9 @@ const App = () => {
 
         {
           path: '/users',
-          element: <Users />,
+          element: <Users getAllUsers={getAllUsers} deleteUser={deleteUser}
+            getUserById={getUserById} updateUser={updateUser} isLoading={isLoading}
+          />,
         },
         {
           path: '/delete/:id',
