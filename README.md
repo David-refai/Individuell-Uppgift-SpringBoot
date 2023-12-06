@@ -25,7 +25,7 @@ The application should be accessible at http://localhost:8080.
 
 4. Setup and run the frontend:
 
-cd src/main/resources/static/frontend
+cd backend/src/main/resources/static/frontend
 npm install
 npm run dev
 
@@ -38,21 +38,20 @@ Application Usage:
 Admin: Can upload and delete files, create users, assign roles, update data, and delete users.
 User: Can download files.
 
-2. Endpoints:
-
-/api/v1/auth/register                   (User): register a new user.
-/api/v1/auth/login                      (User): log in.
-/api/v1/auth/logout                     (User): logout.
-/api/v1/users/create-user               (Admin): Create a new user.
-/api/v1/users/update-user/{userId}      (Admin): Update user data.
-/api/v1/users/delete-user/{userId}      (Admin): Delete a user.
-/api/v1/users/all                       (Admin): Get all users.
-/api/v1/users/{userId}                  (Admin): Get user by id.
-/api/v1/file/upload                     (Admin): Upload files.
-/api/v1/file/download/{id}              (User): Download files.
-
-Admin account: 
-Email: admin@admin.com
-Password: 123
+3. Endpoints:
+4. /api/v1/auth/register                   (User): register a new user.
+5. /api/v1/auth/login                      (User): log in.
+6. /api/v1/auth/logout                     (User): logout.
+7. /api/v1/users/create-user               (Admin): Create a new user.
+8. /api/v1/users/update-user/{userId}      (Admin): Update user data.
+9. /api/v1/users/delete-user/{userId}      (Admin): Delete a user.
+10. /api/v1/users/all                       (Admin): Get all users.
+11. /api/v1/users/{userId}                  (Admin): Get user by id.
+12. /api/v1/file/upload                     (Admin): Upload files.
+13. /api/v1/file/download/{id}              (User): Download files.
+----------------------------------------------------------------------------
+ Admin account
+ Email: admin@admin.com
+ Password: 123
 
 
