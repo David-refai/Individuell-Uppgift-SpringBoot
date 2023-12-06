@@ -17,6 +17,10 @@ import java.util.Map;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 
+/**
+ * Utility class for issuing and validating JWT tokens.
+ */
+
 @Service
 public class JwtUtil {
 

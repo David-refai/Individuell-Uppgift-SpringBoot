@@ -1,8 +1,12 @@
 package com.example.individuelluppgiftspringboot.entities;
 
 
+import com.example.individuelluppgiftspringboot.dto.FileUploadResponse;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,7 +37,16 @@ public class FilesUploaded {
     @Column(name = "file_size")
     private double size;
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        FileUploadResponse other = (FileUploadResponse) obj;
+        return Objects.equals(id, other.getId()) &&
+                Objects.equals(fileName, other.getFileName()) &&
+                Objects.equals(fileType, other.getFileType()) &&
+                Arrays.equals(data, other.getData());
+    }
 
 
 }

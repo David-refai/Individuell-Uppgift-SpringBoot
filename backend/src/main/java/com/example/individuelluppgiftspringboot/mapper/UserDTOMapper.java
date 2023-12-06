@@ -9,6 +9,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
+/**
+ * Mapper class for mapping User to UserDto.
+ * @see User
+ * @see UserDto
+ * @see Function
+ * @see GrantedAuthority
+ */
 @Service
 public class UserDTOMapper implements Function<User, UserDto> {
     @Override
@@ -24,4 +31,6 @@ public class UserDTOMapper implements Function<User, UserDto> {
                 user.getUsername()
         );
     }
+
+
 }

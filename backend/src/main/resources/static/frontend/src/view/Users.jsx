@@ -28,16 +28,20 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../components/Auth';
 import SpinnerShow from '../components/SpinnerShow';
-export default function Users() {
+export default function Users({
+  getAllUsers,
+  deleteUser,
+  getUserById,
+  updateUser,
+  isLoading,
+}) {
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingLocal, setIsLoadingLocal] = useState(false);
   const [error, setError] = useState('');
-    const { getAllUsers, deleteUser } = useContext(AuthContext);
-    
-    
 
   const DeleteUser = async (id) => {
     try {
+      setIsLoadingLocal(true);
       // Delete the user
       await deleteUser(id);
 
@@ -47,30 +51,34 @@ export default function Users() {
       // Update the state with the new list of users
       setUsers(updatedUsers);
 
-      setIsLoading(false);
+      setIsLoadingLocal(false);
     } catch (error) {
       if (error) {
         setError(error.response?.data.message);
       }
     }
   };
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await getAllUsers();
-        setIsLoading(true);
-        setError('');
-        setUsers(res);
-      } catch (error) {
-        if (error) {
-          setError(error.response?.data.message);
-        }
-      } finally {
-        setIsLoading(false);
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoadingLocal(true);
+      const res = await getAllUsers();
+      setUsers(res);
+      setIsLoadingLocal(false);
+      setError('');
+    } catch (error) {
+      if (error) {
+        setError(error.response?.data.message);
       }
-    };
-    fetchUsers();
-  }, [isLoading, getAllUsers]);
+    } finally {
+      setIsLoadingLocal(false);
+    }
+  };
+  useEffect(() => {
+    if (!isLoadingLocal) {
+      fetchUsers();
+    }
+  }, []);
 
   return (
     <Flex direction="column" align="space-between" justify="center">
@@ -99,7 +107,14 @@ export default function Users() {
                   >
                     Delete
                   </Button>
-                  <BasicUsage name={'Edit'} userId={user.id} />
+                  <BasicUsage
+                    name={'Edit'}
+                    userId={user.id}
+                    getAllUsers={getAllUsers}
+                    getUserById={getUserById}
+                    updateUser={updateUser}
+                    isLoading={isLoading}
+                  />
                 </Td>
               </Tr>
             ))}
@@ -110,10 +125,17 @@ export default function Users() {
   );
 }
 
-function BasicUsage({ name, userId }) {
+function BasicUsage({
+  name,
+  userId,
+  getAllUsers,
+  isLoading,
+  updateUser,
+  getUserById,
+}) {
   const [error, setError] = useState('');
-  const { updateUser, getUserById, getAllUsers, isLoading } =
-    useContext(AuthContext);
+  const [isLoadingLocal, setIsLoadingLocal] = useState(false);
+
   const [userUpdate, setUserUpdate] = useState({
     id: userId,
     name: '',
@@ -123,35 +145,35 @@ function BasicUsage({ name, userId }) {
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    const fetchUsers = async (e) => {
-   
-      try {
-        const res = await getUserById(userId);
-        setUserUpdate((prevUser) => ({
-          ...prevUser,
-          id: userId,
-          name: res?.name || '',
-          email: res?.email || '',
-          password: '',
-          roles: res?.roles[0] || '',
-        }));
+  const fetchUsers = async (e) => {
+    try {
+      setIsLoadingLocal(true);
 
-        let list = await getAllUsers();
-        setUserUpdate(list);
+      let list = await getAllUsers();
+      setUserUpdate(list);
 
-    
-        setError('');
-        setUserUpdate(res);
-      } catch (error) {
-        if (error) {
-          setError(error.response?.data.message);
-        }
-      } 
-   
-    };
-    fetchUsers();
-  }, [getAllUsers, getUserById, userId, updateUser]);
+      setIsLoadingLocal(false);
+      setError('');
+    } catch (error) {
+      if (error) {
+        setError(error.response?.data.message);
+      }
+    }
+  };
+
+  const update = async () => {
+    const res = await getUserById(userId);
+    console.log(res);
+    setUserUpdate((prevUser) => ({
+      ...prevUser,
+      id: userId,
+      name: res.name,
+      email: res.email,
+      password: '',
+      roles: res.roles,
+    }));
+      
+  };
 
   const handleChange = (e) => {
     setUserUpdate((prevUser) => ({
@@ -169,22 +191,41 @@ function BasicUsage({ name, userId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateUser(userUpdate);
-      
+      await updateUser({
+        id: userId,
+        name: userUpdate.name,
+        email: userUpdate.email,
+        password: userUpdate.password,
+        roles: userUpdate.roles,
+      });
+
       const updateList = await getAllUsers();
-      if(!isLoading) {
-      setUserUpdate(updateList);
-      onClose();
-        window.location.reload();
+      if (!isLoading) {
+        setUserUpdate(updateList);
+        onClose();
+          window.location.reload();
       }
     } catch (error) {
       setError(error.response?.data.message);
-    } 
+    }
   };
+
+  const fun = () => {
+    onOpen();
+    update();
+  }
 
   return (
     <>
-      <Button onClick={onOpen}>{name}</Button>
+      <Button
+        onClick={fun}
+        colorScheme="teal"
+        variant="outline"
+        isLoading={isLoadingLocal}
+        loadingText="Submitting"
+      >
+        {name}
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -225,8 +266,6 @@ function BasicUsage({ name, userId }) {
                   type="password"
                   name="password"
                   onChange={handleChange}
-
-
                 />
               </Box>
               <Box>
@@ -234,7 +273,7 @@ function BasicUsage({ name, userId }) {
                   <FormLabel>Role</FormLabel>
                   <Select
                     placeholder="Select role"
-                    name="role"
+                    name="roles"
                     onChange={handleRoleChange}
                     value={userUpdate?.roles}
                   >
@@ -247,11 +286,14 @@ function BasicUsage({ name, userId }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSubmit}
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleSubmit}
               isLoading={isLoading}
               loadingText="Submitting"
-                spinnerPlacement="end"
-                    type={'submit'}
+              spinnerPlacement="end"
+              type={'submit'}
             >
               Save
             </Button>

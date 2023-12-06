@@ -30,6 +30,19 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Configuration class for security.
+ * @see EnableWebSecurity
+ * @see SecurityFilterChain
+ * @see AuthenticationManager
+ * @see AuthenticationProvider
+ * @see DaoAuthenticationProvider
+ * @see PasswordEncoder
+ * @see AuthenticationEntryPoint
+ * @see DelegatingAuthenticationEntryPoint
+ * @see JwtAuthenticationFilter
+ * @see HandlerExceptionResolver
+ */
 
 @Configuration
 @EnableWebSecurity
@@ -59,6 +72,7 @@ public class SecurityConfig{
         return configuration.getAuthenticationManager();
     }
 
+    //    authenticationProvider is used to authenticate a user
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -68,6 +82,12 @@ public class SecurityConfig{
     }
 
 
+    /**
+     * Configure the security filter chain.
+     * @param http The HttpSecurity.
+     * @return The SecurityFilterChain.
+     * @throws Exception If an error occurs.
+     */
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -77,10 +97,13 @@ public class SecurityConfig{
                 .cors(withDefaults())
                 .authorizeHttpRequests(configure -> configure
 
-                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register",
-                                       "/", "/api/v1/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/", "/api/v1/file/all").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/file/upload").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users/all-users").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/users/update-user/{id}").hasAuthority("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement
@@ -96,6 +119,11 @@ public class SecurityConfig{
         return http.build();
     }
 
+
+    /**
+     * Configure the authentication entry point.
+     * @return The AuthenticationEntryPoint.
+     */
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
