@@ -13,16 +13,17 @@
 git clone https://github.com/David-refai/Individuell-Uppgift-SpringBoot.git
 
 2. Navigate to the project directory:
-
 cd Individuell-Uppgift-SpringBoot
 
-3. Build and run the Spring Boot application:
-
+---------------------------------------------------------
+4. Build and run the Spring Boot application:
 ./mvnw clean install
 ./mvnw spring-boot:run
 
+---------------------------------------------------------
 The application should be accessible at http://localhost:8080.
 
+---------------------------------------------------------
 4. Setup and run the frontend:
 
 cd backend/src/main/resources/static/frontend
@@ -31,7 +32,7 @@ npm run dev
 
 The frontend should be accessible at http://localhost:5173.
 
-
+---------------------------------------------------------
 Application Usage:
 1. Roles:
 
@@ -50,8 +51,7 @@ User: Can download files.
 12. /api/v1/file/upload                     (Admin): Upload files.
 13. /api/v1/file/download/{id}              (User): Download files.
 ----------------------------------------------------------------------------
- Admin account
- Email: admin@admin.com
- Password: 123
+Email: admin@admin.com
+Password: 123
 
 
