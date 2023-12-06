@@ -16,7 +16,7 @@ git clone https://github.com/David-refai/Individuell-Uppgift-SpringBoot.git
 cd Individuell-Uppgift-SpringBoot
 
 ---------------------------------------------------------
-4. Build and run the Spring Boot application:
+3. Build and run the Spring Boot application:
 ./mvnw clean install
 ./mvnw spring-boot:run
 
